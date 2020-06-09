@@ -1,0 +1,38 @@
+{
+  "name": "homebridge-switcher-boiler",
+  "description": "Homebridge plugin for Switcher - Boiler / Water-Heater",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nitaybz/homebridge-switcher-boiler.git"
+  },
+  "license": "MIT",
+  "preferGlobal": true,
+  "keywords": [
+    "homebridge-plugin",
+    "homebridge-switcher",
+    "homebridge-switcher-boiler",
+    "switcher",
+    "water-heater",
+    "boiler",
+    "category-climate"
+  ],
+  "bugs": {
+    "url": "https://github.com/nitaybz/homebridge-switcher-boiler/issues"
+  },
+  "engines": {
+    "node": ">=10.17.0",
+    "homebridge": ">=0.4.4"
+  },
+  "dependencies": {
+    "fakegato-history": "^0.5.6",
+    "node-persist": "^3.0.5"
+  },
+  "devDependencies": {
+    "eslint": "^7.1.0"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  }
+}
