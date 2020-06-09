@@ -17,7 +17,7 @@
                 "title": "Accessory Name",
                 "description": "Name for your Switcher accessory",
                 "type": "string",
-                "required": false
+                "required": true
             },
             "pollingIntervalInSec": {
                 "title": "State Polling Interval in Seconds",

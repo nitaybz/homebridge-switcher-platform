@@ -82,7 +82,7 @@ def setAutoClose(hours):
 def getAutoClose(res):
 	b = ba.hexlify(res)[194:202]
 	open_time = int(b[6:8] + b[4:6] + b[2:4] + b[0:2] , 16)
-	m = divmod(open_time, 60)
+	m, s = divmod(open_time, 60)
 	h, m = divmod(m, 60)
 	return "\"autoShutdownMs\": " + str(h*3600000 + m*60000)  + ", "
 	
