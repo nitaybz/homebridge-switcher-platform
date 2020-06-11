@@ -17,7 +17,7 @@ function SwitcherBoiler(log, config, api) {
     this.log = log
     this.name = config['name'] || 'Switcher'
     this.displayName = this.name
-	this.pollingInterval = config['pollingIntervalInSec'] ? config['pollingIntervalInSec'] * 1000 : 60000
+	this.pollingInterval = config['pollingIntervalInSec'] !== undefined ? config['pollingIntervalInSec'] * 1000 : 30000
 	this.debug = config['debug'] || false
 
 	this.state = {}
@@ -58,8 +58,8 @@ function SwitcherBoiler(log, config, api) {
 	}
 
 	this.cachedConfig = null
+	
 	this.discoverDevices = async () => {
-
 		try {
 			await storage.init({
 				dir: this.persistPath,
@@ -71,31 +71,41 @@ function SwitcherBoiler(log, config, api) {
 			this.log(err)
 			this.log("Please contact the plugin creator...")
 		}
-	
-		if (this.cachedConfig && this.cachedConfig.deviceIP && this.cachedConfig.deviceID) {
-			this.log('Found Device IP and Device ID in storage!')
-			SwitcherApi.init(this.log, this.debug, this.cachedConfig.deviceIP, this.cachedConfig.deviceID)
-		} else {
-			this.log('No devices found in storage. -------> Discovering devices...')
-			SwitcherApi.init(this.log, this.debug)
-			try {
-				const discoveredDevice = await SwitcherApi.discover()
-				if (discoveredDevice && discoveredDevice.deviceIP && discoveredDevice.deviceID) {
-					this.log('Discovered Switcher Device!')
-					this.cachedConfig = {
-						deviceIP: discoveredDevice.deviceIP,
-						deviceID: discoveredDevice.deviceID
-					}
-					await storage.setItem('switcher_config', this.cachedConfig)
+
+		// this.log('No devices found in storage. -------> Discovering devices...')
+		SwitcherApi.init(this.log, this.debug)
+		try {
+			if (this.debug)
+				this.log('Discovering Switcher Device...')
+			SwitcherApi.discover()
+				.then(discoveredDevice => {
+					if (discoveredDevice && discoveredDevice.deviceIP && discoveredDevice.deviceID) {
+						this.log('DISCOVERED ~~~~~~ Switcher Device!')
+						this.cachedConfig = {
+							deviceIP: discoveredDevice.deviceIP,
+							deviceID: discoveredDevice.deviceID
+						}
+						
+						await storage.setItem('switcher_config', this.cachedConfig)
+						if (this.debug)
+							this.log(discoveredDevice)
+						
+					} else 
+						throw Error(discoveredDevice)
+				}).catch(err => {
+					this.log('Could NOT discover devices!! -> Checking in storage for cached config...')
 					if (this.debug)
-						this.log(discoveredDevice)
-					
-				} else
-					throw Error(discoveredDevice)
-			} catch(err) {
-				this.log('Could NOT discover devices!! -> Can\'t start the plugin...')
-				this.log(err)
-			}
+						this.log(err)
+					if (this.cachedConfig && this.cachedConfig.deviceIP && this.cachedConfig.deviceID) {
+						this.log('Found Device IP and Device ID in storage!')
+						SwitcherApi.init(this.log, this.debug, this.cachedConfig.deviceIP, this.cachedConfig.deviceID)
+					} else 
+						throw Error('NOT DISCOVERED & NOT CACHED')
+
+				})
+		} catch(err) {
+			this.log('Could NOT discover devices!! -> Can\'t start the plugin...')
+			this.log(err)
 		}
 	}
 

@@ -6,21 +6,16 @@
     "pin": "031-45-154"
   },
 
-  "description": "This is an example configuration for the sensibo-ac homebridge plugin",
+  "description": "This is an example configuration for the switcher-boiler homebridge plugin",
   "platforms": [
-    {
-      "platform": "SensiboAC",
-      "apiKey": "*************",
-      "disableFan": false,
-      "disableDry": false,
-      "enableSyncButton": true,
-      "enableOccupancySensor": true,
-      "enableClimateReactSwitch": true,
-      "enableHistoryStorage": true,
-      "debug": false
-    }
   ],
 
   "accessories": [
+    {
+        "accessory": "SwitcherBoiler",
+        "name": "Boiler",
+        "pollingIntervalInSec": 30,
+        "debug": false
+    }
   ]
 }
