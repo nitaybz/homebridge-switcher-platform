@@ -86,7 +86,7 @@ function SwitcherBoiler(log, config, api) {
 							deviceID: discoveredDevice.deviceID
 						}
 						
-						await storage.setItem('switcher_config', this.cachedConfig)
+						storage.setItem('switcher_config', this.cachedConfig)
 						if (this.debug)
 							this.log(discoveredDevice)
 						
