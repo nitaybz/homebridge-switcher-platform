@@ -80,7 +80,7 @@ function SwitcherBoiler(log, config, api) {
 			SwitcherApi.discover()
 				.then(discoveredDevice => {
 					if (discoveredDevice && discoveredDevice.deviceIP && discoveredDevice.deviceID) {
-						this.log('DISCOVERED ~~~~~~ Switcher Device!')
+						this.log(` ~~~~~~ DISCOVERED SWITCHER DEVICE (${discoveredDevice.deviceIP}) ~~~~~~`)
 						this.cachedConfig = {
 							deviceIP: discoveredDevice.deviceIP,
 							deviceID: discoveredDevice.deviceID
