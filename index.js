@@ -145,20 +145,19 @@ SwitcherBoiler.prototype.getServices = function () {
 
 
 SwitcherBoiler.prototype.setOn = async function (on, callback) {
+	callback()
+	if (on)
+		this.log('Turning ON the Switcher')
+	else
+		this.log('Turning OFF the Switcher')
+		
 	try {
 		await SwitcherApi.setState(on)
-		if (on) {
-			this.log('Turning ON the Switcher')
-			this.state.power = 'on'
-		} else {
-			this.log('Turning OFF the Switcher')
-			this.state.power = 'off'
-		}
+		this.state.power = on ? 'on' : 'off'
 	} catch(err) {
 		this.log('ERROR Turning ' + (on ? 'ON' : 'OFF') + ' the Switcher')
 		this.log(err)
 	}
-	callback()
 }
 
 
