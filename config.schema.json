@@ -7,8 +7,8 @@
     "schema": {
         "type": "object",
         "properties": {
-            "platform": {
-                "title": "Platform",
+            "accessory": {
+                "title": "Accessory",
                 "type": "string",
                 "const": "switcherBoiler",
                 "readOnly": true
@@ -23,7 +23,7 @@
                 "title": "State Polling Interval in Seconds",
                 "description": "Amount of time in Seconds to poll device state. default to 60 seconds. 0 for no polling",
                 "type": "integer",
-                "default": 30000,
+                "default": 30,
                 "required": false
             },
             "debug": {
