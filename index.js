@@ -99,8 +99,11 @@ function SwitcherBoiler(log, config, api) {
 					if (this.cachedConfig && this.cachedConfig.deviceIP && this.cachedConfig.deviceID) {
 						this.log('Found Device IP and Device ID in storage!')
 						SwitcherApi.init(this.log, this.debug, this.cachedConfig.deviceIP, this.cachedConfig.deviceID)
-					} else 
-						throw Error('NOT DISCOVERED & NOT CACHED')
+					} else {
+
+						this.log('Nothing in storage - NOT DISCOVERED & NOT CACHED')
+						this.log('xxxxxxxxxx    -   Could NOT discover devices!! -> Can\'t start the plugin...    -   xxxxxxxxxx')
+					}
 
 				})
 		} catch(err) {

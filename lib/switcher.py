@@ -113,7 +113,7 @@ if sys.argv[1] == "discover":
 			ip_addr = int(b[6:8] + b[4:6] + b[2:4] + b[0:2] , 16)
 			device_id = ba.hexlify(data)[36:42]
 			switcherIP = socket.inet_ntoa(struct.pack("<L", ip_addr))
-			print("{ \"status\": \"success\", \"deviceID\": \"" + device_id + "\", \"deviceIP\": \"" + switcherIP + "\" }")
+			print("{ \"status\": \"success\", \"deviceID\": \"" + str(device_id) + "\", \"deviceIP\": \"" + str(switcherIP) + "\" }")
 			break
 
 else:

@@ -10,7 +10,7 @@
             "accessory": {
                 "title": "Accessory",
                 "type": "string",
-                "const": "switcherBoiler",
+                "const": "SwitcherBoiler",
                 "readOnly": true
             },
             "name": {
