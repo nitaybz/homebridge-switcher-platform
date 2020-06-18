@@ -36,15 +36,16 @@ elif sys.argv[1].startswith('m'):
 # CRC 
 def crcSignFullPacketComKey(pData, pKey):
 	crc = ba.hexlify(struct.pack('>I', ba.crc_hqx(ba.unhexlify(pData), 0x1021)))
-	pData = pData + crc[6:8] + crc[4:6]
-	crc = crc[6:8] + crc[4:6] + ba.hexlify( pKey )
-	crc = ba.hexlify(struct.pack('>I', ba.crc_hqx(ba.unhexlify(crc), 0x1021)))
+	pData = bytes(pData, "utf-8") + crc[6:8] + crc[4:6]
+	crc = crc[6:8] + crc[4:6] + ba.hexlify( bytes(pKey, "utf-8") )
+	crc = bytes(ba.hexlify(struct.pack('>I', ba.crc_hqx(ba.unhexlify(crc), 0x1021))))
 	pData = pData + crc[6:8] + crc[4:6]
 	return pData
 
 # Generate Time Stamp
 def getTS():
-	return ba.hexlify(struct.pack('<I', int(round(time.time())))) 
+	return ba.hexlify(struct.pack('<I', int(round(time.time())))).decode("utf-8")
+
 # Generate Timer value
 def sTimer(sMinutes):
     sSeconds = int(sMinutes) * 60
@@ -111,9 +112,9 @@ if sys.argv[1] == "discover":
 		else:
 			b = ba.hexlify(data)[152:160]
 			ip_addr = int(b[6:8] + b[4:6] + b[2:4] + b[0:2] , 16)
-			device_id = ba.hexlify(data)[36:42]
+			device_id = ba.hexlify(data)[36:42].decode("utf-8")
 			switcherIP = socket.inet_ntoa(struct.pack("<L", ip_addr))
-			print("{ \"status\": \"success\", \"deviceID\": \"" + str(device_id) + "\", \"deviceIP\": \"" + str(switcherIP) + "\" }")
+			print("{ \"status\": \"success\", \"deviceID\": \"" + device_id + "\", \"deviceIP\": \"" + str(switcherIP) + "\" }")
 			break
 
 else:
@@ -122,10 +123,10 @@ else:
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		s.connect((switcherIP, 9957)) 
 		data = "fef052000232a100" + pSession + "340001000000000000000000"  + getTS() + "00000000000000000000f0fe1c00" + phone_id + "0000" + device_pass + "00000000000000000000000000000000000000000000000000000000"
-		data = crcSignFullPacketComKey(data, pKey)
+		ata = crcSignFullPacketComKey(data, pKey)
 		s.send(ba.unhexlify(data))
 		res = s.recv(1024)
-		pSession2 = ba.hexlify(res)[16:24]
+		pSession2 = ba.hexlify(res)[16:24].decode("utf-8")
 		if not pSession2:
 			s.close()
 			print("{ \"status\": \"failed\", \"message\": \"Operation failed, Could not acquire SessionID, Please try again...\" }")
@@ -135,8 +136,8 @@ else:
 		data = crcSignFullPacketComKey(data, pKey)
 		s.send(ba.unhexlify(data))
 		res = s.recv(1024)
-		deviceName = res[40:72]
-		state = ba.hexlify(res)[150:154]
+		deviceName = res[40:72].decode("utf-8")
+		state = ba.hexlify(res)[150:154].decode("utf-8")
 		if sys.argv[1] == "setOff" and state == "0000":
 			s.close()
 			print ("{ \"status\": \"success\", \"message\": \"Device is already OFF\" }")
@@ -197,4 +198,4 @@ else:
 		print("\"status\": \"success\" }")
 
 	except Exception as e:
-		print("{ \"status\": \"failed\", \"message\": \"" + str(e) + "\" }")
+		print("{ \"status\": \"failed\", \"message\": \"" + str(e).replace('"', '\\"') + "\" }")
