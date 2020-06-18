@@ -1,5 +1,4 @@
 # Reverse Engineering and coding by Aviad Golan @AviadGolan and Shai Rod @NightRang3r
-# adapted to python3 by @nitaybz
 
 #!/usr/bin/env python
 
@@ -42,6 +41,7 @@ def crcSignFullPacketComKey(pData, pKey):
 	crc = ba.hexlify(struct.pack('>I', ba.crc_hqx(ba.unhexlify(crc), 0x1021)))
 	pData = pData + crc[6:8].decode("utf-8")  + crc[4:6].decode("utf-8") 
 	return pData
+
 
 # Generate Time Stamp
 def getTS():
@@ -114,7 +114,7 @@ if sys.argv[1] == "discover":
 			b = ba.hexlify(data)[152:160]
 			ip_addr = int(b[6:8] + b[4:6] + b[2:4] + b[0:2] , 16)
 			device_id = ba.hexlify(data)[36:42].decode('utf-8')
-			switcherIP = socket.inet_ntoa(struct.pack("<L", ip_addr)).decode('utf-8')
+			switcherIP = socket.inet_ntoa(struct.pack("<L", ip_addr))
 			print("{ \"status\": \"success\", \"deviceID\": \"" + device_id + "\", \"deviceIP\": \"" + switcherIP + "\" }")
 			break
 
