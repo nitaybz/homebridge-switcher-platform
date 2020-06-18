@@ -1,4 +1,5 @@
 # Reverse Engineering and coding by Aviad Golan @AviadGolan and Shai Rod @NightRang3r
+# adapted to python3 by @nitaybz
 
 #!/usr/bin/env python
 
@@ -32,19 +33,19 @@ elif sys.argv[1].startswith('t'):
 	sCommand = "1"
 elif sys.argv[1].startswith('m'):
 	sCommand = "2"
-
+#  & 0xffffffff
 # CRC 
 def crcSignFullPacketComKey(pData, pKey):
 	crc = ba.hexlify(struct.pack('>I', ba.crc_hqx(ba.unhexlify(pData), 0x1021)))
-	pData = bytes(pData, "utf-8") + crc[6:8] + crc[4:6]
-	crc = crc[6:8] + crc[4:6] + ba.hexlify( bytes(pKey, "utf-8") )
-	crc = bytes(ba.hexlify(struct.pack('>I', ba.crc_hqx(ba.unhexlify(crc), 0x1021))))
-	pData = pData + crc[6:8] + crc[4:6]
+	pData = pData + crc[6:8].decode("utf-8") + crc[4:6].decode("utf-8")
+	crc = crc[6:8] + crc[4:6] + ba.hexlify( bytes(pKey.encode('UTF-8')) )
+	crc = ba.hexlify(struct.pack('>I', ba.crc_hqx(ba.unhexlify(crc), 0x1021)))
+	pData = pData + crc[6:8].decode("utf-8")  + crc[4:6].decode("utf-8") 
 	return pData
 
 # Generate Time Stamp
 def getTS():
-	return ba.hexlify(struct.pack('<I', int(round(time.time())))).decode("utf-8")
+	return ba.hexlify(struct.pack('<I', int(round(time.time()))))
 
 # Generate Timer value
 def sTimer(sMinutes):
@@ -112,32 +113,33 @@ if sys.argv[1] == "discover":
 		else:
 			b = ba.hexlify(data)[152:160]
 			ip_addr = int(b[6:8] + b[4:6] + b[2:4] + b[0:2] , 16)
-			device_id = ba.hexlify(data)[36:42].decode("utf-8")
-			switcherIP = socket.inet_ntoa(struct.pack("<L", ip_addr))
-			print("{ \"status\": \"success\", \"deviceID\": \"" + device_id + "\", \"deviceIP\": \"" + str(switcherIP) + "\" }")
+			device_id = ba.hexlify(data)[36:42].decode('utf-8')
+			switcherIP = socket.inet_ntoa(struct.pack("<L", ip_addr)).decode('utf-8')
+			print("{ \"status\": \"success\", \"deviceID\": \"" + device_id + "\", \"deviceIP\": \"" + switcherIP + "\" }")
 			break
 
 else:
+	
 	try:
-		time.sleep(3)
+		
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		s.connect((switcherIP, 9957)) 
-		data = "fef052000232a100" + pSession + "340001000000000000000000"  + getTS() + "00000000000000000000f0fe1c00" + phone_id + "0000" + device_pass + "00000000000000000000000000000000000000000000000000000000"
-		ata = crcSignFullPacketComKey(data, pKey)
+		data = "fef052000232a100" + pSession + "340001000000000000000000"  + getTS().decode('utf-8') + "00000000000000000000f0fe1c00" + phone_id + "0000" + device_pass + "00000000000000000000000000000000000000000000000000000000"
+		data = crcSignFullPacketComKey(data, pKey)
 		s.send(ba.unhexlify(data))
 		res = s.recv(1024)
-		pSession2 = ba.hexlify(res)[16:24].decode("utf-8")
+		pSession2 = ba.hexlify(res)[16:24]
 		if not pSession2:
 			s.close()
 			print("{ \"status\": \"failed\", \"message\": \"Operation failed, Could not acquire SessionID, Please try again...\" }")
 			sys.exit()
 
-		data = "fef0300002320103" + pSession2 + "340001000000000000000000" + getTS() + "00000000000000000000f0fe" + device_id + "00"
+		data = "fef0300002320103" + pSession2.decode("utf-8") + "340001000000000000000000" + getTS().decode('utf-8') + "00000000000000000000f0fe" + device_id + "00"
 		data = crcSignFullPacketComKey(data, pKey)
 		s.send(ba.unhexlify(data))
 		res = s.recv(1024)
-		deviceName = res[40:72].decode("utf-8")
-		state = ba.hexlify(res)[150:154].decode("utf-8")
+		deviceName = res[40:72].decode('utf-8')
+		state = ba.hexlify(res)[150:154].decode('utf-8')
 		if sys.argv[1] == "setOff" and state == "0000":
 			s.close()
 			print ("{ \"status\": \"success\", \"message\": \"Device is already OFF\" }")
@@ -161,7 +163,7 @@ else:
 				print("{ \"status\": \"failed\", \"message\": \"" + sys.argv[1][1:] + " Is not a valid number!\" }")
 				sys.exit()
 			if sMinutes > 0 and sMinutes <=60:
-				data = "fef05d0002320102" + pSession2 + "340001000000000000000000" + getTS() + "00000000000000000000f0fe" + device_id + "00" + phone_id + "0000" + device_pass + "000000000000000000000000000000000000000000000000000000000106000100"  + sTimer(sMinutes)
+				data = "fef05d0002320102" + pSession2 + "340001000000000000000000" + getTS().decode('utf-8') + "00000000000000000000f0fe" + device_id + "00" + phone_id + "0000" + device_pass + "000000000000000000000000000000000000000000000000000000000106000100"  + sTimer(sMinutes)
 				data = crcSignFullPacketComKey(data, pKey)
 				s.send(ba.unhexlify(data))
 				res = s.recv(1024)
@@ -177,14 +179,14 @@ else:
 		
 			else:
 				auto_close = setAutoClose(sys.argv[1][1:])
-				data ="fef05b0002320102" + pSession2 + "340001000000000000000000" + getTS() + "00000000000000000000f0fe" + device_id + "00" + phone_id + "0000" + device_pass + "00000000000000000000000000000000000000000000000000000000040400" + auto_close
+				data ="fef05b0002320102" + pSession2 + "340001000000000000000000" + getTS().decode('utf-8') + "00000000000000000000f0fe" + device_id + "00" + phone_id + "0000" + device_pass + "00000000000000000000000000000000000000000000000000000000040400" + auto_close
 				data = crcSignFullPacketComKey(data, pKey)
 				s.send(ba.unhexlify(data))
 				res = s.recv(1024)
 				print ("{ \"message\": \"Sending AutoClose Command to Switcher\", ")
 				s.close()
 		else:
-			data = "fef05d0002320102" + pSession2 + "340001000000000000000000" + getTS() + "00000000000000000000f0fe" + device_id + "00" + phone_id + "0000" + device_pass + "000000000000000000000000000000000000000000000000000000000106000" + sCommand + "0000000000"
+			data = "fef05d0002320102" + pSession2.decode('utf-8') + "340001000000000000000000" + getTS().decode('utf-8') + "00000000000000000000f0fe" + device_id + "00" + phone_id + "0000" + device_pass + "000000000000000000000000000000000000000000000000000000000106000" + sCommand + "0000000000"
 			data = crcSignFullPacketComKey(data, pKey)
 			s.send(ba.unhexlify(data))
 			res = s.recv(1024)
@@ -198,4 +200,4 @@ else:
 		print("\"status\": \"success\" }")
 
 	except Exception as e:
-		print("{ \"status\": \"failed\", \"message\": \"" + str(e).replace('"', '\\"') + "\" }")
+		print("{ \"status\": \"failed\", \"message\": \"" + str(e) + "\" }")
