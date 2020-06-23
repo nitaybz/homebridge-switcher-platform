@@ -1,14 +1,16 @@
 
 
-let Service, Characteristic, HomebridgeAPI
+let Service, Characteristic, HomebridgeAPI, EnergyCharacteristic, FakeGatoHistoryService
 const SwitcherApi = require('./lib/api')
 const storage = require('node-persist')
 
 module.exports = function (homebridge) {
     Service = homebridge.hap.Service
-    Characteristic = homebridge.hap.Characteristic
+	Characteristic = homebridge.hap.Characteristic
+	EnergyCharacteristic = require('./lib/api')(Characteristic)
 	HomebridgeAPI = homebridge
     homebridge.registerAccessory("homebridge-switcher-boiler", "SwitcherBoiler", SwitcherBoiler)
+	FakeGatoHistoryService = require("fakegato-history")(homebridge)
 }
 
 function SwitcherBoiler(log, config, api) {
@@ -20,21 +22,39 @@ function SwitcherBoiler(log, config, api) {
 	this.pollingInterval = config['pollingIntervalInSec'] !== undefined ? config['pollingIntervalInSec'] * 1000 : 30000
 	this.debug = config['debug'] || false
 
-	this.state = {}
+	this.state = {
+		power: 'off',
+		electricCurrentAmper: 0,
+		powerConsumptionWatts: 0,
+		autoShutdownMs: 5400000,
+		timeLeftMs: 0
+	}
 	this.uuid = UUIDGen.generate(this.name)
 	this.persistPath = HomebridgeAPI.user.persistPath() + '/../switcher-persist'
 
+
+	this.loggingService = new FakeGatoHistoryService('energy', this, { storage: 'fs', path: HomebridgeAPI.user.persistPath() + '/../switcher-persist' })
 
 	this.updateHomeKit = (newState) => {
 		let updated = false
 		if (this.state.power !== newState.power) {
 			this.switchService.getCharacteristic(Characteristic.On).updateValue(newState.power === 'on')
+			this.loggingService.addEntry({time: moment().unix(), status: (newState.power === 'on' ? 1 : 0)});
 			updated = true
 		}
+		if (this.state.powerConsumptionWatts !== newState.powerConsumptionWatts) {
+
+			this.switchService.getCharacteristic(Characteristic.On).updateValue(newState.power === 'on')
+			this.switchService.getCharacteristic(Characteristic.On).updateValue(newState.power === 'on')
+			this.loggingService.addEntry({time: moment().unix(), power: newState.powerConsumptionWatts});
+			updated = true
+		}
+
+
 		if (updated) {
 			this.state = newState
 			if (this.debug) {
-				this.log('Updating HomeKit with new State')
+				this.log('Updated HomeKit with new State:')
 				this.log(newState)
 			}
 		}
@@ -126,9 +146,21 @@ SwitcherBoiler.prototype.getServices = function () {
         .setCharacteristic(Characteristic.Model, "switcher-boiler")
         .setCharacteristic(Characteristic.SerialNumber, this.uuid)
 
+	const Amperes
 
     this.switchService = new Service.Switch(this.name)
 
+	characteristicVolts = service.getCharacteristic(EnergyCharacteristics.Volts)
+		.updateValue(220)
+		.on('get', callback => { callback(null, 220) });
+
+	characteristicAmps = service.getCharacteristic(EnergyCharacteristics.Amperes)
+		.updateValue(this.state.electricCurrentAmper)
+		.on('get', callback => { callback(null, this.state.electricCurrentAmper) });
+
+	characteristicWatts = service.getCharacteristic(EnergyCharacteristics.Watts)
+		.updateValue(this.state.powerConsumptionWatts)
+		.on('get', callback => { callback(null, this.state.powerConsumptionWatts) });
 
     this.switchService.getCharacteristic(Characteristic.On)
         .on('get', this.getOn.bind(this))
@@ -174,13 +206,14 @@ SwitcherBoiler.prototype.getOn = async function (callback) {
 
 	try {
 		const newState = await SwitcherApi.getState()
-		this.log('Got New Switcher State:')
+		this.log('Got Switcher State:')
 		this.log(newState)
 
 		on = newState.power === 'on'
-		if (!this.pollingInterval)
+		if (!this.pollingInterval) {
+			this.state = newState
 			callback(null, on)
-		else 
+		} else 
 			this.updateHomeKit(newState)
 
 	} catch(err) {
