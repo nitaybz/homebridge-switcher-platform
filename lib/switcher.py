@@ -78,7 +78,6 @@ def setAutoClose(hours):
 		print("{ \"status\": \"failed\", \"message\": \"Value can't be more than 23 hours and 59 minutes!\" }")
 		sys.exit()
 	else:
-		print ("{ \"message\": \"Auto shutdown was set to " + str(hours*3600000) + " Hour(s)\"}")
 		return ba.hexlify(struct.pack('<I', mSeconds))
 
 def getAutoClose(res):
@@ -179,11 +178,11 @@ else:
 		
 			else:
 				auto_close = setAutoClose(sys.argv[1][1:])
-				data ="fef05b0002320102" + pSession2 + "340001000000000000000000" + getTS().decode('utf-8') + "00000000000000000000f0fe" + device_id + "00" + phone_id + "0000" + device_pass + "00000000000000000000000000000000000000000000000000000000040400" + auto_close
+				data ="fef05b0002320102" + pSession2 + "340001000000000000000000" + getTS().decode('utf-8') + "00000000000000000000f0fe" + device_id + "00" + phone_id + "0000" + device_pass + "00000000000000000000000000000000000000000000000000000000040400" + auto_close.decode('utf-8')
 				data = crcSignFullPacketComKey(data, pKey)
 				s.send(ba.unhexlify(data))
 				res = s.recv(1024)
-				print ("{ \"message\": \"Sending AutoClose Command to Switcher\", ")
+				print ("{\"message\": \"Auto shutdown was set to " + sys.argv[1][1:] + "\", ")
 				s.close()
 		else:
 			data = "fef05d0002320102" + pSession2.decode('utf-8') + "340001000000000000000000" + getTS().decode('utf-8') + "00000000000000000000f0fe" + device_id + "00" + phone_id + "0000" + device_pass + "000000000000000000000000000000000000000000000000000000000106000" + sCommand + "0000000000"
