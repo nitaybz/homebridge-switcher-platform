@@ -190,6 +190,8 @@ function SwitcherBoiler(log, config, api) {
 						if (this.debug)
 							this.log(discoveredDevice)
 						
+						if (this.pollingInterval)
+							this.interval = setInterval(this.refreshState, this.pollingInterval)
 					} else 
 						throw Error(discoveredDevice)
 				}).catch(err => {
@@ -207,6 +209,8 @@ function SwitcherBoiler(log, config, api) {
 					if (this.cachedConfig && this.cachedConfig.deviceIP && this.cachedConfig.deviceID) {
 						this.log('Found Device IP and Device ID in storage!')
 						SwitcherApi.init(this.log, this.debug, this.cachedConfig.deviceIP, this.cachedConfig.deviceID)
+						if (this.pollingInterval)
+							this.interval = setInterval(this.refreshState, this.pollingInterval)
 					} else {
 
 						this.log('Nothing in storage - NOT DISCOVERED & NOT CACHED')
@@ -344,8 +348,6 @@ SwitcherBoiler.prototype.getServices = function () {
 
 
 	this.discoverDevices()
-	if (this.pollingInterval)
-		this.interval = setInterval(this.refreshState, this.pollingInterval)
 
 	return services
 
