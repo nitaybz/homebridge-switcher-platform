@@ -22,7 +22,7 @@
             },
             "accessoryType": {
                 "title": "Accessory Type",
-                "description": "Name for your Switcher accessory",
+                "description": "Accessory Type and Icon - affect functionality (read more in the README.md file)",
                 "type": "string",
                 "default": "switch",
                 "required": true,
