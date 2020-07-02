@@ -142,10 +142,27 @@ check the following screenshot and explanations:<br><br>
 By default, the accessory state will be updated in the background every 30 seconds. This can be changed using `pollingIntervalInSec` in your config, by setting a number (in seconds) representing the delay between each status request.<br>
 The state will also refresh every time you open the "Home" app or any related HomeKit app.
 
-### Issues & Debug
+## Issues & Debug
 
-If you experience any issues with the plugins please refer to the [Issues](https://github.com/nitaybz/homebridge-switcher-boiler/issues) tab and check if your issue is already described there, if it doesn't, please create a new issue with as much detailed information as you can give (logs are crucial).<br>
+If you experience any issues with the plugins please refer to the [Issues](https://github.com/nitaybz/homebridge-switcher-boiler/issues) tab or [Swicher-Boiler Discord Channel](https://discord.gg/7DyabQ6) and check if your issue is already described there, if it doesn't, please report a new issue with as much detailed information as you can give (logs are crucial).<br>
 if you want to even speed up the process, you can add `"debug": true` to your config, which will give me more details on the logs and speed up fixing the issue.
+
+
+###  Windows Users Error
+
+If you run HomeBridge on Windows and find yourself struggling with some issues (SPAWN ERROR mostly), please follow those instructions:
+
+1. Uninstall all Python versions from your device
+2. Download Python (not from Microsoft Store) from the official Python website (executable installer).
+link for the download: https://www.python.org/ftp/python/3.7.8/python-3.7.8-amd64.exe
+3. Open the installer and make sure you approve setting a path and installing for **All Users** which is essential for it to work.
+4. After installation is complete, restart your device.
+
+Hope it solve your issue, but if the issue persist, please contact me through:
+- [GitHub Issues](https://github.com/nitaybz/homebridge-switcher-boiler/issues)
+- [Swicher-Boiler Discord Channel](https://discord.gg/7DyabQ6)
+
+
 
 <br>
 
