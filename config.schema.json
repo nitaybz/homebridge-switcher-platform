@@ -39,6 +39,12 @@
                 "default": 30,
                 "required": false
             },
+            "pythonPath": {
+                "title": "Path to Python",
+                "description": "If the plugin having issues running python, please mention the path to python on your machine, otherwise leave blank",
+                "type": "string",
+                "required": false
+            },
             "debug": {
                 "title": "Enable Debug Logs",
                 "description": "When checked, the plugin will produce extra logs for debugging purposes",

@@ -21,6 +21,7 @@ function SwitcherBoiler(log, config, api) {
     this.displayName = this.name
     this.accessoryType = config['accessoryType'] || 'switch'
 	this.pollingInterval = config['pollingIntervalInSec'] !== undefined ? config['pollingIntervalInSec'] * 1000 : 30000
+	this.pythonPath = config['pythonPath'] || 'python'
 	this.debug = config['debug'] || false
 	this.interval = null
 	this.lastReset = 0
@@ -172,7 +173,7 @@ function SwitcherBoiler(log, config, api) {
 			this.log("Please contact the plugin creator...")
 		}
 
-		SwitcherApi.init(this.log, this.debug)
+		SwitcherApi.init(this.log, this.debug, this.pythonPath)
 		try {
 			if (this.debug)
 				this.log('Discovering Switcher Device...')
@@ -208,7 +209,7 @@ function SwitcherBoiler(log, config, api) {
 						this.log(err)
 					if (this.cachedConfig && this.cachedConfig.deviceIP && this.cachedConfig.deviceID) {
 						this.log('Found Device IP and Device ID in storage!')
-						SwitcherApi.init(this.log, this.debug, this.cachedConfig.deviceIP, this.cachedConfig.deviceID)
+						SwitcherApi.init(this.log, this.debug, this.pythonPath, this.cachedConfig.deviceIP, this.cachedConfig.deviceID)
 						if (this.pollingInterval)
 							this.interval = setInterval(this.refreshState, this.pollingInterval)
 					} else {
