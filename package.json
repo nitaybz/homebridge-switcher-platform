@@ -1,7 +1,7 @@
 {
   "name": "homebridge-switcher-boiler",
   "description": "Homebridge plugin for Switcher - Boiler / Water-Heater",
-  "version": "1.1.13",
+  "version": "1.1.14",
   "repository": {
     "type": "git",
     "url": "git://github.com/nitaybz/homebridge-switcher-boiler.git"
@@ -34,5 +34,19 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
-  }
+  },
+  "funding": [
+    {
+      "type" : "paypal",
+      "url" : "https://paypal.me/nitaybz"
+    },
+    {
+      "type" : "patreon",
+      "url" : "https://www.patreon.com/nitaybz"
+    },
+    {
+      "type" : "kofi",
+      "url" : "https://ko-fi.com/nitaybz"
+    }
+  ]
 }
