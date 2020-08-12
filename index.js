@@ -14,12 +14,12 @@ module.exports = function (homebridge) {
 }
 
 function SwitcherBoiler(log, config, api) {
-    let UUIDGen = api.hap.uuid
+	let UUIDGen = api.hap.uuid
 
-    this.log = log
-    this.name = config['name'] || 'Switcher'
-    this.displayName = this.name
-    this.accessoryType = config['accessoryType'] || 'switch'
+	this.log = log
+	this.name = config['name'] || 'Switcher'
+	this.displayName = this.name
+	this.accessoryType = config['accessoryType'] || 'switch'
 	this.pollingInterval = config['pollingIntervalInSec'] !== undefined ? config['pollingIntervalInSec'] * 1000 : 30000
 	this.pythonPath = config['pythonPath'] || 'python'
 	this.debug = config['debug'] || false
@@ -30,6 +30,7 @@ function SwitcherBoiler(log, config, api) {
 	this.ExtraPersistedData = {}
 	this.timer = null
 	this.remainingDuration = 0
+	this.api = api
 
 	this.accessoryType = this.accessoryType.toLowerCase()
 	if (this.accessoryType !== 'switch' && this.accessoryType !== 'outlet' && this.accessoryType !== 'valve')
@@ -173,7 +174,7 @@ function SwitcherBoiler(log, config, api) {
 			this.log("Please contact the plugin creator...")
 		}
 
-		SwitcherApi.init(this.log, this.debug, this.pythonPath)
+		SwitcherApi.init(this.log, this.debug, this.api, this.pythonPath)
 		try {
 			if (this.debug)
 				this.log('Discovering Switcher Device...')
@@ -196,7 +197,7 @@ function SwitcherBoiler(log, config, api) {
 					} else 
 						throw Error(discoveredDevice)
 				}).catch(err => {
-					if (err.includes('Please try again') && isBelowErrorRepeatLimit()) {
+					if (err && err.includes('Please try again') && isBelowErrorRepeatLimit()) {
 						errorRepeatCounter ++
 						setTimeout(async () => {
 							this.log('Trying again...')
@@ -209,7 +210,7 @@ function SwitcherBoiler(log, config, api) {
 						this.log(err)
 					if (this.cachedConfig && this.cachedConfig.deviceIP && this.cachedConfig.deviceID) {
 						this.log('Found Device IP and Device ID in storage!')
-						SwitcherApi.init(this.log, this.debug, this.pythonPath, this.cachedConfig.deviceIP, this.cachedConfig.deviceID)
+						SwitcherApi.init(this.log, this.debug, this.api, this.pythonPath, this.cachedConfig.deviceIP, this.cachedConfig.deviceID)
 						if (this.pollingInterval)
 							this.interval = setInterval(this.refreshState, this.pollingInterval)
 					} else {
