@@ -6,7 +6,7 @@ let FakeGatoHistoryService
 
 module.exports = (api) => {
 	FakeGatoHistoryService = require("fakegato-history")(api)
-	api.registerAccessory('ExampleAccessoryName', SwitcherBoiler);
+	api.registerAccessory('SwitcherBoiler', SwitcherBoiler);
 }
 
 class SwitcherBoiler {
