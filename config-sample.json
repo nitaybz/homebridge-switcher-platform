@@ -12,11 +12,14 @@
 
   "accessories": [
     {
-        "accessory": "SwitcherBoiler",
-        "name": "Boiler",
-        "accessoryType": "outlet",
-        "pollingIntervalInSec": 30,
-        "debug": false
+      "accessory": "SwitcherBoiler",
+      "name": "Switcher Boiler",
+      "accessoryType": "outlet",
+      "deviceId": "24eaf5",
+      "ip": "10.0.0.1",
+      "deviceName": "Boiler",
+      "discoveryTimeout": 20,
+      "debug": false
     }
   ]
 }
