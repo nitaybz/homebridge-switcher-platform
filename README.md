@@ -9,7 +9,7 @@
 
 [Homebridge](https://github.com/nfarina/homebridge) plugin for Switcher - Boiler / Water Heater (and smart sockets)
 
-  <img src="branding/product.png" width="300px">
+  <img src="branding/products.png" width="500px">
 
 ### Requirements
 
