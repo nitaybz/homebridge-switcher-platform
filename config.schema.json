@@ -7,12 +7,6 @@
     "schema": {
         "type": "object",
         "properties": {
-            "accessory": {
-                "title": "Accessory",
-                "type": "string",
-                "const": "SwitcherBoiler",
-                "readOnly": true
-            },
             "name": {
                 "title": "Accessory Name",
                 "description": "Name for your Switcher accessory",
@@ -32,17 +26,29 @@
                   { "title": "Water Valve", "enum": ["valve"] }
                 ]
             },
-            "pollingIntervalInSec": {
-                "title": "State Polling Interval in Seconds",
-                "description": "Amount of time in Seconds to poll device state. default to 60 seconds. 0 for no polling",
-                "type": "integer",
-                "default": 30,
+            "deviceId": {
+                "title": "Device ID",
+                "description": "Device ID for discovery - can only be extracted via scripts or you can view the ID in this plugin logs",
+                "type": "string",
                 "required": false
             },
-            "pythonPath": {
-                "title": "Path to Python",
-                "description": "If the plugin having issues running python, please mention the path to python on your machine, otherwise leave blank",
+            "ip": {
+                "title": "Device IP Address",
+                "description": "IP address of the device for discovery.",
                 "type": "string",
+                "required": false
+            },
+            "deviceName": {
+                "title": "Switcher Device Name",
+                "description": "Device exact name from Switcher app for discovery.",
+                "type": "string",
+                "required": false
+            },
+            "discoveryTimeout": {
+                "title": "Discovery Timeout in Seconds",
+                "description": "Maximum time (in seconds) to wait for device discovery.",
+                "type": "integer",
+                "default": 20,
                 "required": false
             },
             "debug": {
