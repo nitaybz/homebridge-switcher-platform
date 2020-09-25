@@ -50,7 +50,7 @@ const getOn = (callback) => {
 		return
 	}
 	log(`Switcher is ${accessory.switcher.state.state ? 'ON' : 'OFF'}`)
-	callback(!!accessory.switcher.state.state)
+	callback(null, !!accessory.switcher.state.state)
 }
 
 const getOutletInUse = (callback) => {
@@ -61,7 +61,7 @@ const getOutletInUse = (callback) => {
 	}
 	const inUse = accessory.switcher.state.power_consumption > 0
 	log(`Switcher is ${inUse ? 'IN USE' : 'NOT IN USE'}`)
-	callback(inUse)
+	callback(null, inUse)
 }
 
 const setOn = (state, callback) => {

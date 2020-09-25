@@ -11,7 +11,7 @@ const Valve = (that) => {
 	const ValveService = new Service.Valve(accessory.name)
 	log('initializing Valve Accessory')
 	ValveService.getCharacteristic(Characteristic.ValveType)
-		.updateValue(0)
+		.updateValue(2)
 			
 	ValveService.getCharacteristic(Characteristic.Active)
 		.on('get', getActive)
@@ -53,7 +53,7 @@ const getActive = (callback) => {
 		return
 	}
 	log(`Switcher is ${accessory.switcher.state.state ? 'ON' : 'OFF'}`)
-	callback(accessory.switcher.state.state)
+	callback(null, accessory.switcher.state.state)
 }
 
 const getValveInUse = (callback) => {
@@ -63,7 +63,7 @@ const getValveInUse = (callback) => {
 		return
 	}
 	log(`Switcher is ${accessory.switcher.state.state ? 'IN USE' : 'NOT IN USE'}`)
-	callback(accessory.switcher.state.state)
+	callback(null, accessory.switcher.state.state)
 }
 
 const setActive = (state, callback) => {

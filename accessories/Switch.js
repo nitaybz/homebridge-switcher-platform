@@ -46,7 +46,7 @@ const getOn = (callback) => {
 		return
 	}
 	log(`Switcher is ${accessory.switcher.state.state ? 'ON' : 'OFF'}`)
-	callback(!!accessory.switcher.state.state)
+	callback(null, !!accessory.switcher.state.state)
 }
 
 
