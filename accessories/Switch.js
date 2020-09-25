@@ -1,28 +1,30 @@
-let switcher, extras, log, Characteristic, Service
+let log, Characteristic, Service, accessory
 const switcherInit = require('../lib/switcher')
 const addExtras = require('./extras')
 
-const Switch = (accessory) => {
+const Switch = (that) => {
+	accessory = that
 	Characteristic = accessory.api.hap.Characteristic
 	Service = accessory.api.hap.Service
 	log = accessory.log
 	const SwitchService = new Service.Switch(accessory.name)
+	log('initializing Switch Accessory')
 			
 	SwitchService.getCharacteristic(Characteristic.On)
 		.on('get', getOn)
 		.on('set', setOn)
 
-	extras = addExtras(SwitchService, accessory, switcher)
+	const extras = addExtras(SwitchService, accessory)
 
 	accessory.updateHomeKit = () => {
-		SwitchService.getCharacteristic(Characteristic.On).updateValue(!!switcher.state.state)
+		SwitchService.getCharacteristic(Characteristic.On).updateValue(!!accessory.switcher.state.state)
 		extras.updateHomeKit()
 	}
 	
 	switcherInit(accessory)
-		.then(device => {
-			switcher = device
-			log(`Successfully initialized Switcher accessory: ${switcher.state.name}(${switcher.device_id}) at ${switcher.switcher_ip}`)
+		.then(switcher => {
+			accessory.switcher = switcher
+			log(`Successfully initialized Switcher accessory: ${switcher.state.name} (id:${switcher.device_id}) at ${switcher.switcher_ip}`)
 		})
 		.catch(err => {
 			log(err)
@@ -38,26 +40,28 @@ const Switch = (accessory) => {
 module.exports = Switch
 
 const getOn = (callback) => {
-	if (!switcher) {
+	if (!accessory.switcher) {
 		log('switcher has yet to connect')
-		callback('switcher has yet to connect');
+		callback('switcher has yet to connect')
+		return
 	}
-	log(`Switcher is ${switcher.state.state ? 'ON' : 'OFF'}`)
-	callback(!!switcher.state.state)
+	log(`Switcher is ${accessory.switcher.state.state ? 'ON' : 'OFF'}`)
+	callback(!!accessory.switcher.state.state)
 }
 
 
 const setOn = (state, callback) => {
-	if (!switcher) {
+	if (!accessory.switcher) {
 		log('switcher has yet to connect')
-		callback('switcher has yet to connect');
+		callback('switcher has yet to connect')
+		return
 	}
 	if (state) {
 		log('Turning ON Switcher')
-		switcher.turn_on(); 
+		accessory.switcher.turn_on() 
 	} else {
 		log('Turning OFF Switcher')
-		switcher.turn_off(); 
+		accessory.switcher.turn_off() 
 	}
 	callback()
 }

@@ -14,10 +14,20 @@
     {
       "accessory": "SwitcherBoiler",
       "name": "Switcher Boiler",
-      "accessoryType": "outlet",
+      "accessoryType": "switch",
       "deviceId": "24eaf5",
       "ip": "10.0.0.1",
       "deviceName": "Boiler",
+      "discoveryTimeout": 20,
+      "debug": false
+    },
+    {
+      "accessory": "SwitcherBoiler",
+      "name": "Switcher Socket",
+      "accessoryType": "outlet",
+      "deviceId": "e23d45",
+      "ip": "10.0.0.2",
+      "deviceName": "Bed Lamp",
       "discoveryTimeout": 20,
       "debug": false
     }

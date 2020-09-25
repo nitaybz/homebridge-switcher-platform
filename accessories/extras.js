@@ -1,7 +1,7 @@
-let switcher, log, Characteristic
+let log, Characteristic, accessory
 
-const Extras = (service, accessory, device) => {
-	switcher = device
+const Extras = (service, that) => {
+	accessory = that
 	Characteristic = accessory.api.hap.Characteristic
 	log = accessory.log
 	accessory.totalEnergy = 0
@@ -9,14 +9,16 @@ const Extras = (service, accessory, device) => {
 	accessory.lastReset = 0
 	accessory.lastStateTime = new Date()
 
-	const EnergyCharacteristics = require('./lib/EnergyCharacteristics')(Characteristic)
+	const EnergyCharacteristics = require('../lib/EnergyCharacteristics')(Characteristic)
 
 	
 	service.getCharacteristic(Characteristic.SetDuration)
 		.setProps({
+			format: Characteristic.Formats.UINT32,
 			maxValue: 86340,
 			minValue: 3600,
-			minStep: 60
+			minStep: 60,
+			perms: [Characteristic.Perms.READ, Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
 		})
 		.on('get', getDuration)
 		.on('set', setDuration)
@@ -48,7 +50,7 @@ const Extras = (service, accessory, device) => {
 				const extraPersistedData = accessory.loggingService.getExtraPersistedData()
 				if (extraPersistedData != undefined)
 					accessory.totalEnergy = extraPersistedData.totalEnergy
-				log.debug("Total Consumption: " + accessory.totalEnergy)
+				log.easyDebug("Total Consumption: " + accessory.totalEnergy)
 				callback(null, accessory.totalEnergy)
 			})
 
@@ -69,8 +71,8 @@ const Extras = (service, accessory, device) => {
 
 	return  { 
 		updateHomeKit: () => {
-			service.getCharacteristic(Characteristic.RemainingDuration).updateValue(switcher.state.remaining_seconds)
-			service.getCharacteristic(Characteristic.SetDuration).updateValue(switcher.state.default_shutdown_seconds)
+			service.getCharacteristic(Characteristic.RemainingDuration).updateValue(accessory.switcher.state.remaining_seconds)
+			service.getCharacteristic(Characteristic.SetDuration).updateValue(accessory.switcher.state.default_shutdown_seconds)
 			service.getCharacteristic(EnergyCharacteristics.Watts).getValue(null)
 			service.getCharacteristic(EnergyCharacteristics.Volts).getValue(null)
 			service.getCharacteristic(EnergyCharacteristics.Amperes).getValue(null)
@@ -82,22 +84,22 @@ const Extras = (service, accessory, device) => {
 				if (accessory.loggingService.isHistoryLoaded()) {
 					const extraPersistedData = accessory.loggingService.getExtraPersistedData()
 					if (extraPersistedData != undefined) {
-						accessory.totalEnergy = extraPersistedData.totalEnergy + accessory.totalEnergyTemp + switcher.state.power_consumption * (timeSinceLastState / 1000) / 3600 / 1000
+						accessory.totalEnergy = extraPersistedData.totalEnergy + accessory.totalEnergyTemp + accessory.switcher.state.power_consumption * (timeSinceLastState / 1000) / 3600 / 1000
 						accessory.loggingService.setExtraPersistedData({ totalEnergy: accessory.totalEnergy, lastReset: extraPersistedData.lastReset })
 					}
 					else {
-						accessory.totalEnergy = accessory.totalEnergyTemp + switcher.state.power_consumption * (timeSinceLastState / 1000) / 3600 / 1000
+						accessory.totalEnergy = accessory.totalEnergyTemp + accessory.switcher.state.power_consumption * (timeSinceLastState / 1000) / 3600 / 1000
 						accessory.loggingService.setExtraPersistedData({ totalEnergy: accessory.totalEnergy, lastReset: 0 })
 					}
 					accessory.totalEnergyTemp = 0
 		
 				} else {
-					accessory.totalEnergyTemp = accessory.totalEnergyTemp + switcher.state.power_consumption * (timeSinceLastState / 1000) / 3600 / 1000
+					accessory.totalEnergyTemp = accessory.totalEnergyTemp + accessory.switcher.state.power_consumption * (timeSinceLastState / 1000) / 3600 / 1000
 					accessory.totalEnergy = accessory.totalEnergyTemp
 				}
 		
 				
-				accessory.loggingService.addEntry({time: Math.floor((new Date()).getTime()/1000), power: switcher.state.power_consumption})
+				accessory.loggingService.addEntry({time: Math.floor((new Date()).getTime()/1000), power: accessory.switcher.state.power_consumption})
 			}
 		}
 	}
@@ -107,63 +109,63 @@ const Extras = (service, accessory, device) => {
 module.exports = Extras
 
 const getVolts = (callback) => {
-	if (!switcher) {
-		callback('switcher has yet to connect');
+	if (!accessory.switcher) {
+		callback('switcher has yet to connect')
 		return
 	}
-	const volts = switcher.state.state ? 220 : 0
+	const volts = accessory.switcher.state.state ? 220 : 0
 	callback(null, volts)
 }
 
 const getAmperes = (callback) => {
-	if (!switcher) {
-		callback('switcher has yet to connect');
+	if (!accessory.switcher) {
+		callback('switcher has yet to connect')
 		return
 	}
-	const amperes = Number(Math.round(switcher.state.power_consumption/220 + "e1") + "e-1")
+	const amperes = Number(Math.round(accessory.switcher.state.power_consumption/220 + "e1") + "e-1")
 	callback(null, amperes)
 }
 
 const getWatts = (callback) => {
-	if (!switcher) {
-		callback('switcher has yet to connect');
+	if (!accessory.switcher) {
+		callback('switcher has yet to connect')
 		return
 	}
-	const watts = switcher.state.power_consumption
+	const watts = accessory.switcher.state.power_consumption
 	callback(null, watts)
 }
 
 const getDuration = (callback) => {
-	if (!switcher) {
-		callback('switcher has yet to connect');
+	if (!accessory.switcher) {
+		callback('switcher has yet to connect')
 		return
 	}
-	const duration = switcher.state.default_shutdown_seconds
-	log.debug("Auto Shutdown in Seconds:" + duration)
+	const duration = accessory.switcher.state.default_shutdown_seconds
+	log.easyDebug("Auto Shutdown in Seconds:" + duration)
 	callback(null, duration)
 }
 
 const getRemainingDuration = (callback) => {
-	if (!switcher) {
-		callback('switcher has yet to connect');
+	if (!accessory.switcher) {
+		callback('switcher has yet to connect')
 		return
 	}
-	const duration = switcher.state.remaining_seconds
-	log.debug("Remaining duration in Seconds:" + duration)
+	const duration = accessory.switcher.state.remaining_seconds
+	log.easyDebug("Remaining duration in Seconds:" + duration)
 	callback(null, duration)
 }
 
 const setDuration = (seconds, callback) => {
-	if (!switcher) {
-		callback('switcher has yet to connect');
+	if (!accessory.switcher) {
+		callback('switcher has yet to connect')
 		return
 	}
 
 	const hours = Math.floor(seconds / 60 / 60)
 	const minutes = Math.floor(seconds / 60) % 60
-	const formattedTime = hours + ':' + minutes
+	const formattedTime = hours + ':' + ('0' + minutes).slice(-2)
 
 	log("Setting new \"Auto Shutdown\" time - " + formattedTime)
-	switcher.set_default_shutdown(seconds)
+	accessory.switcher.set_default_shutdown(seconds)
 	callback()
 }

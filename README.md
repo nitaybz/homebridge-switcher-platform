@@ -84,6 +84,14 @@ If you don't use HOOBS (or Homebridge UI), keep reading:
         "ip": "10.0.0.1",
         "discoveryTimeout": 20,
         "debug": false
+    },
+    {
+      "accessory": "SwitcherBoiler",
+      "name": "Switcher Socket",
+      "accessoryType": "outlet",
+      "deviceName": "Bed Lamp",
+      "discoveryTimeout": 20,
+      "debug": false
     }
 ]
 ```

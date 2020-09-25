@@ -1,18 +1,18 @@
 
-const OutletService = require('./accessories/Outlet');
-const ValveService = require('./accessories/Valve');
-const SwitchService = require('./accessories/Switch');
+const OutletService = require('./accessories/Outlet')
+const ValveService = require('./accessories/Valve')
+const SwitchService = require('./accessories/Switch')
 let FakeGatoHistoryService
 
 module.exports = (api) => {
 	FakeGatoHistoryService = require("fakegato-history")(api)
-	api.registerAccessory('SwitcherBoiler', SwitcherBoiler);
+	api.registerAccessory('SwitcherBoiler', SwitcherBoiler)
 }
 
 class SwitcherBoiler {
 
 	constructor(log, config, api) {
-		this.api = api;
+		this.api = api
 		this.log = log
 		this.name = config['name'] || 'Switcher'
 		this.deviceId = config['deviceId']
@@ -25,9 +25,17 @@ class SwitcherBoiler {
 		this.persistPath = this.api.user.persistPath() + '/../switcher-persist'
 		this.uuid = this.api.hap.uuid.generate(this.name)
 
-		this.log.debug = () => {
-			if (this.debug)
-				this.log(...arguments)
+		
+		// define debug method to output debug logs when enabled in the config
+		this.log.easyDebug = (...content) => {
+			if (this.debug) {
+				this.log(content.reduce((previous, current) => {
+					return previous + ' ' + current
+				}))
+			} else
+				this.log.debug(content.reduce((previous, current) => {
+					return previous + ' ' + current
+				}))
 		}
 
 		this.accessoryType = this.accessoryType.toLowerCase()
