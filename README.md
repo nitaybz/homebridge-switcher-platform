@@ -35,8 +35,8 @@ Multiple devices can be added as long as you can supply one of: **`deviceId`** O
 
 You can now add safely more than one accessory, including Switcher smart sockets. You just need to supply some information about the device:
 
-1. If you'll supply `deviceId` and `ip`(device IP address). the plugin will automatically connect to the device without scanning the network.
-2. If you will supply one of the following: `deviceId`  OR `ip`(device IP address) OR `deviceName` (The device name in Switcher app).
+1. If you will supply one identifier of following: `deviceId`  OR `ip`(device IP address) OR `deviceName` (The device name in Switcher app) the plugin will scan and search for a device with that identifier.
+2. If you'll supply `deviceId` and `ip`(device IP address). the plugin will automatically connect to the device without scanning the network.
 3. If you'll not supply any information about the device, the plugin will scan the network and connect to the first device it detects.
 
 Now, the plugin is always listening to the Switcher device and will always get status updates from the device every few seconds. Therefore `pollingIntervalInSec` is deprecated.
