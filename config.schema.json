@@ -1,7 +1,7 @@
 {
     "pluginAlias": "SwitcherBoiler",
     "pluginType": "accessory",
-    "singular": true,
+    "singular": false,
     "headerDisplay": "Homebridge plugin for Switcher - Boiler / Water-Heater",
     "footerDisplay": "Created by @nitaybz",
     "schema": {
