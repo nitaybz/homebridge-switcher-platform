@@ -1,9 +1,9 @@
-let log, Characteristic, Service, accessory
+let log, Characteristic, Service
+const device = {}
 const switcherInit = require('../lib/switcher')
 const addExtras = require('./extras')
 
-const Switch = (that) => {
-	accessory = that
+const Switch = (accessory) => {
 	Characteristic = accessory.api.hap.Characteristic
 	Service = accessory.api.hap.Service
 	log = accessory.log
@@ -17,13 +17,13 @@ const Switch = (that) => {
 	const extras = addExtras(SwitchService, accessory)
 
 	accessory.updateHomeKit = () => {
-		SwitchService.getCharacteristic(Characteristic.On).updateValue(!!accessory.switcher.state.state)
+		SwitchService.getCharacteristic(Characteristic.On).updateValue(!!device.switcher.state.state)
 		extras.updateHomeKit()
 	}
 	
 	switcherInit(accessory)
 		.then(switcher => {
-			accessory.switcher = switcher
+			device.switcher = switcher
 			log(`Successfully initialized Switcher accessory: ${switcher.state.name} (id:${switcher.device_id}) at ${switcher.switcher_ip}`)
 		})
 		.catch(err => {
@@ -40,28 +40,28 @@ const Switch = (that) => {
 module.exports = Switch
 
 const getOn = (callback) => {
-	if (!accessory.switcher) {
+	if (!device.switcher) {
 		log('switcher has yet to connect')
 		callback('switcher has yet to connect')
 		return
 	}
-	log(`Switcher is ${accessory.switcher.state.state ? 'ON' : 'OFF'}`)
-	callback(null, !!accessory.switcher.state.state)
+	log(`Switcher is ${device.switcher.state.state ? 'ON' : 'OFF'}`)
+	callback(null, !!device.switcher.state.state)
 }
 
 
 const setOn = (state, callback) => {
-	if (!accessory.switcher) {
+	if (!device.switcher) {
 		log('switcher has yet to connect')
 		callback('switcher has yet to connect')
 		return
 	}
 	if (state) {
 		log('Turning ON Switcher')
-		accessory.switcher.turn_on() 
+		device.switcher.turn_on() 
 	} else {
 		log('Turning OFF Switcher')
-		accessory.switcher.turn_off() 
+		device.switcher.turn_off() 
 	}
 	callback()
 }

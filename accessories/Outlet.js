@@ -1,9 +1,9 @@
-let log, Characteristic, Service, accessory
+let log, Characteristic, Service
+const device = {}
 const switcherInit = require('../lib/switcher')
 const addExtras = require('./extras')
 
-const Outlet = (that) => {
-	accessory = that
+const Outlet = (accessory) => {
 	Characteristic = accessory.api.hap.Characteristic
 	Service = accessory.api.hap.Service
 	log = accessory.log
@@ -20,14 +20,14 @@ const Outlet = (that) => {
 	const extras = addExtras(OutletService, accessory)
 
 	accessory.updateHomeKit = () => {
-		OutletService.getCharacteristic(Characteristic.On).updateValue(!!accessory.switcher.state.state)
-		OutletService.getCharacteristic(Characteristic.OutletInUse).updateValue(accessory.switcher.state.power_consumption > 0)
+		OutletService.getCharacteristic(Characteristic.On).updateValue(!!device.switcher.state.state)
+		OutletService.getCharacteristic(Characteristic.OutletInUse).updateValue(device.switcher.state.power_consumption > 0)
 		extras.updateHomeKit()
 	}
 	
 	switcherInit(accessory)
 		.then(switcher => {
-			accessory.switcher = switcher
+			device.switcher = switcher
 			log(`Successfully initialized Switcher accessory: ${switcher.state.name} (id:${switcher.device_id}) at ${switcher.switcher_ip}`)
 		})
 		.catch(err => {
@@ -44,38 +44,38 @@ const Outlet = (that) => {
 module.exports = Outlet
 
 const getOn = (callback) => {
-	if (!accessory.switcher) {
+	if (!device.switcher) {
 		log('switcher has yet to connect')
 		callback('switcher has yet to connect')
 		return
 	}
-	log(`Switcher is ${accessory.switcher.state.state ? 'ON' : 'OFF'}`)
-	callback(null, !!accessory.switcher.state.state)
+	log(`Switcher is ${device.switcher.state.state ? 'ON' : 'OFF'}`)
+	callback(null, !!device.switcher.state.state)
 }
 
 const getOutletInUse = (callback) => {
-	if (!accessory.switcher) {
+	if (!device.switcher) {
 		log('switcher has yet to connect')
 		callback('switcher has yet to connect')
 		return
 	}
-	const inUse = accessory.switcher.state.power_consumption > 0
+	const inUse = device.switcher.state.power_consumption > 0
 	log(`Switcher is ${inUse ? 'IN USE' : 'NOT IN USE'}`)
 	callback(null, inUse)
 }
 
 const setOn = (state, callback) => {
-	if (!accessory.switcher) {
+	if (!device.switcher) {
 		log('switcher has yet to connect')
 		callback('switcher has yet to connect')
 		return
 	}
 	if (state) {
 		log('Turning ON Switcher')
-		accessory.switcher.turn_on() 
+		device.switcher.turn_on() 
 	} else {
 		log('Turning OFF Switcher')
-		accessory.switcher.turn_off() 
+		device.switcher.turn_off() 
 	}
 	callback()
 }

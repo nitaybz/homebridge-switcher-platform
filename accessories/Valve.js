@@ -1,9 +1,9 @@
-let log, Characteristic, Service, accessory
+let log, Characteristic, Service
+const device = {}
 const switcherInit = require('../lib/switcher')
 const addExtras = require('./extras')
 
-const Valve = (that) => {
-	accessory = that
+const Valve = (accessory) => {
 	Characteristic = accessory.api.hap.Characteristic
 	Service = accessory.api.hap.Service
 	log = accessory.log		
@@ -23,14 +23,14 @@ const Valve = (that) => {
 	const extras = addExtras(ValveService, accessory)
 
 	accessory.updateHomeKit = () => {
-		ValveService.getCharacteristic(Characteristic.Active).updateValue(accessory.switcher.state.state)
-		ValveService.getCharacteristic(Characteristic.InUse).updateValue(accessory.switcher.state.state)
+		ValveService.getCharacteristic(Characteristic.Active).updateValue(device.switcher.state.state)
+		ValveService.getCharacteristic(Characteristic.InUse).updateValue(device.switcher.state.state)
 		extras.updateHomeKit()
 	}
 	
 	switcherInit(accessory)
 		.then(switcher => {
-			accessory.switcher = switcher
+			device.switcher = switcher
 			log(`Successfully initialized Switcher accessory: ${switcher.state.name} (id:${switcher.device_id}) at ${switcher.switcher_ip}`)
 		})
 		.catch(err => {
@@ -47,37 +47,37 @@ const Valve = (that) => {
 module.exports = Valve
 
 const getActive = (callback) => {
-	if (!accessory.switcher) {
+	if (!device.switcher) {
 		log('switcher has yet to connect')
 		callback('switcher has yet to connect')
 		return
 	}
-	log(`Switcher is ${accessory.switcher.state.state ? 'ON' : 'OFF'}`)
-	callback(null, accessory.switcher.state.state)
+	log(`Switcher is ${device.switcher.state.state ? 'ON' : 'OFF'}`)
+	callback(null, device.switcher.state.state)
 }
 
 const getValveInUse = (callback) => {
-	if (!accessory.switcher) {
+	if (!device.switcher) {
 		log('switcher has yet to connect')
 		callback('switcher has yet to connect')
 		return
 	}
-	log(`Switcher is ${accessory.switcher.state.state ? 'IN USE' : 'NOT IN USE'}`)
-	callback(null, accessory.switcher.state.state)
+	log(`Switcher is ${device.switcher.state.state ? 'IN USE' : 'NOT IN USE'}`)
+	callback(null, device.switcher.state.state)
 }
 
 const setActive = (state, callback) => {
-	if (!accessory.switcher) {
+	if (!device.switcher) {
 		log('switcher has yet to connect')
 		callback('switcher has yet to connect')
 		return
 	}
 	if (state) {
 		log('Turning ON Switcher')
-		accessory.switcher.turn_on() 
+		device.switcher.turn_on() 
 	} else {
 		log('Turning OFF Switcher')
-		accessory.switcher.turn_off() 
+		device.switcher.turn_off() 
 	}
 	callback()
 }
