@@ -27,7 +27,7 @@
   "dependencies": {
     "fakegato-history": "^0.5.6",
     "node-persist": "^3.0.5",
-    "switcher-js": "github:nitaybz/switcher-js"
+    "switcher-js2": "^1.0.0"
   },
   "devDependencies": {
     "eslint": "^7.1.0"
