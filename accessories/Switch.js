@@ -14,7 +14,7 @@ const Switch = (accessory) => {
 		.on('get', getOn)
 		.on('set', setOn)
 
-	const extras = addExtras(SwitchService, accessory)
+	const extras = addExtras(SwitchService, accessory, device)
 
 	accessory.updateHomeKit = () => {
 		SwitchService.getCharacteristic(Characteristic.On).updateValue(!!device.switcher.state.state)

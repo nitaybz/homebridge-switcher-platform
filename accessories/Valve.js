@@ -20,7 +20,7 @@ const Valve = (accessory) => {
 	ValveService.getCharacteristic(Characteristic.InUse)
 		.on('get', getValveInUse)
 
-	const extras = addExtras(ValveService, accessory)
+	const extras = addExtras(ValveService, accessory, device)
 
 	accessory.updateHomeKit = () => {
 		ValveService.getCharacteristic(Characteristic.Active).updateValue(device.switcher.state.state)

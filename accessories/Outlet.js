@@ -17,7 +17,7 @@ const Outlet = (accessory) => {
 	OutletService.getCharacteristic(Characteristic.OutletInUse)
 		.on('get', getOutletInUse)
 
-	const extras = addExtras(OutletService, accessory)
+	const extras = addExtras(OutletService, accessory, device)
 
 	accessory.updateHomeKit = () => {
 		OutletService.getCharacteristic(Characteristic.On).updateValue(!!device.switcher.state.state)
