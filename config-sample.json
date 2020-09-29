@@ -8,28 +8,35 @@
 
   "description": "This is an example configuration for the switcher-boiler homebridge plugin",
   "platforms": [
+    {
+      "platform": "SwitcherBoiler",
+      "name": "Switcher Boiler",
+      "debug": false,
+      "secondsToRemove": 180,
+      "devices": [
+        {
+          "accessoryType": "outlet",
+          "ip": "10.0.0.2",
+          "deviceId": "e4eaf6"
+        },
+        {
+          "accessoryType": "valve",
+          "ip": "10.0.0.1",
+          "deviceId": "24eaf5",
+          "deviceName": "Boiler"
+        },
+        {
+          "accessoryType": "switch",
+          "deviceName": "Desk Bulb"
+        },
+        {
+          "deviceId": "21eac3",
+          "hide": true
+        }
+      ]
+    }
   ],
 
   "accessories": [
-    {
-      "accessory": "SwitcherBoiler",
-      "name": "Switcher Boiler",
-      "accessoryType": "switch",
-      "deviceId": "24eaf5",
-      "ip": "10.0.0.1",
-      "deviceName": "Boiler",
-      "discoveryTimeout": 20,
-      "debug": false
-    },
-    {
-      "accessory": "SwitcherBoiler",
-      "name": "Switcher Socket",
-      "accessoryType": "outlet",
-      "deviceId": "e23d45",
-      "ip": "10.0.0.2",
-      "deviceName": "Bed Lamp",
-      "discoveryTimeout": 20,
-      "debug": false
-    }
   ]
 }
