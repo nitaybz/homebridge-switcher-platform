@@ -1,7 +1,8 @@
 const Switcher = require('./lib/Switcher')
-
+const PLUGIN_NAME = 'homebridge-switcher-boiler'
+const PLATFORM_NAME = 'SwitcherBoiler'
 module.exports = (api) => {
-	api.registerPlatform('homebridge-switcher-boiler', 'SwitcherBoiler', SwitcherBoiler)
+	api.registerPlatform(PLUGIN_NAME, PLATFORM_NAME, SwitcherBoiler)
 }
 
 class SwitcherBoiler {
@@ -12,7 +13,9 @@ class SwitcherBoiler {
 
 		this.accessories = []
 		this.switcherDevices = {}
-		this.name = config.name || 'Switcher Boiler'
+		this.PLUGIN_NAME = PLUGIN_NAME
+		this.PLATFORM_NAME = PLATFORM_NAME
+		this.name = config.name || PLATFORM_NAME
 
 		this.devices = config.devices || []
 		this.secondsToRemove = config.secondsToRemove || 600

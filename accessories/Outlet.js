@@ -1,81 +1,115 @@
-let log, Characteristic, Service
-const device = {}
-const switcherInit = require('../lib/switcher')
+let Characteristic, Service
+const stateManager = require('../lib/stateManager')
 const addExtras = require('./extras')
 
-const Outlet = (accessory) => {
-	Characteristic = accessory.api.hap.Characteristic
-	Service = accessory.api.hap.Service
-	log = accessory.log
-	const OutletService = new Service.Outlet(accessory.name)
-	log('initializing Outlet Accessory')
+class Outlet {
+	constructor(switcher, switcherInfo, platform) {
 
-	OutletService.getCharacteristic(Characteristic.On)
-		.on('get', getOn)
-		.on('set', setOn)
+		const FakeGatoHistoryService = require("fakegato-history")(platform.api)
 
-	OutletService.getCharacteristic(Characteristic.OutletInUse)
-		.on('get', getOutletInUse)
+		Service = platform.api.hap.Service
+		Characteristic = platform.api.hap.Characteristic
+		
+		this.switcher = switcher
+		this.log = platform.log
+		this.api = platform.api
+		this.id = switcherInfo.device_id
+		this.ip = switcherInfo.device_ip
+		this.name = switcherInfo.name
+		this.serial = this.id
+		this.model = 'switcher-boiler'
+		this.manufacturer = 'Switcher'
+		this.type = 'Outlet'
+		this.displayName = this.name
+		this.state = switcherInfo.state
+		this.processing = false
 
-	const extras = addExtras(OutletService, accessory, device)
+		this.UUID = this.api.hap.uuid.generate(this.id)
+		this.accessory = platform.accessories.find(accessory => accessory.UUID === this.UUID)
 
-	accessory.updateHomeKit = () => {
-		OutletService.getCharacteristic(Characteristic.On).updateValue(!!device.switcher.state.state)
-		OutletService.getCharacteristic(Characteristic.OutletInUse).updateValue(device.switcher.state.power_consumption > 0)
-		extras.updateHomeKit()
-	}
-	
-	switcherInit(accessory)
-		.then(switcher => {
-			device.switcher = switcher
-			log(`Successfully initialized Switcher accessory: ${switcher.state.name} (id:${switcher.device_id}) at ${switcher.switcher_ip}`)
-		})
-		.catch(err => {
-			log(err)
-			log('Can\'t initialize the plugin properly !!!')
-			log('Please check your config and that switcher is connected to the network...')
-		})
+		if (!this.accessory) {
+			this.log(`Creating New Switcher  (${this.type}) Accessory: "${this.name}"`)
+			this.accessory = new this.api.platformAccessory(this.name, this.UUID)
+			this.accessory.context.type = this.type
+			this.accessory.context.deviceId = this.id
+
+			platform.accessories.push(this.accessory)
+			// register the accessory
+			this.api.registerPlatformAccessories(platform.PLUGIN_NAME, platform.PLATFORM_NAME, [this.accessory])
+		} else {
+			this.log(`Switcher "${this.name}" (${this.id}) is Connected!`)
+			if (this.type !== this.accessory.context.type) {
+				this.removeOtherTypes()
+				this.accessory.context.type = this.type
+			}
+		}
+
+		this.accessory.context.ip = this.ip
+
+
+		// ~~~~~~~~ power consumption history variables ~~~~~~~~
+		this.loggingService = new FakeGatoHistoryService('energy', this.accessory, { storage: 'fs', path: this.persistPath, disableTimer:true  })
+		this.totalEnergy = 0
+		this.totalEnergyTemp = 0
+		this.lastReset = 0
+		this.lastStateTime = new Date()
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		let informationService = this.accessory.getService(Service.AccessoryInformation)
+
+		if (!informationService)
+			informationService = this.accessory.addService(Service.AccessoryInformation)
+
+		informationService
+			.setCharacteristic(Characteristic.Manufacturer, this.manufacturer)
+			.setCharacteristic(Characteristic.Model, this.model)
+			.setCharacteristic(Characteristic.SerialNumber, this.serial)
 
 		
-	return OutletService
+		this.addOutletService()
+		this.extras = addExtras(this.OutletService)
+	}
+
+	addOutletService() {
+		this.log.easyDebug(`Adding Outlet service for "${this.name}"`)
+		this.OutletService = this.accessory.getService(Service.Outlet)
+		if (!this.OutletService)
+			this.OutletService = this.accessory.addService(Service.Outlet, this.name, this.type)
+
+
+		this.OutletService.getCharacteristic(Characteristic.On)
+			.on('get', stateManager.get.On.bind(this))
+			.on('set', stateManager.set.On.bind(this))
+
+
+		this.OutletService.getCharacteristic(Characteristic.OutletInUse)
+			.on('get', stateManager.get.OutletInUse.bind(this))
+	}
+
+	removeOtherTypes() {
+
+		// remove valve service
+		const ValveService = this.accessory.getService(Service.Valve)
+		if (ValveService) {
+			this.log.easyDebug(`Removing Valve Service from ${this.name}`)
+			this.accessory.removeService(ValveService)
+		}
+
+		// remove switch service
+		const SwitchService = this.accessory.getService(Service.Switch)
+		if (SwitchService) {
+			this.log.easyDebug(`Removing Switch Service from ${this.name}`)
+			this.accessory.removeService(SwitchService)
+		}
+	}
+
+	updateState(state) {
+		this.state = state
+		this.OutletService.getCharacteristic(Characteristic.On).updateValue(!!this.state.power)
+		this.OutletService.getCharacteristic(Characteristic.OutletInUse).updateValue(this.state.power_consumption > 0)
+		this.extras.updateHomeKit()
+	}
 }
 
 
 module.exports = Outlet
-
-const getOn = (callback) => {
-	if (!device.switcher) {
-		log('switcher has yet to connect')
-		callback('switcher has yet to connect')
-		return
-	}
-	log(`Switcher is ${device.switcher.state.state ? 'ON' : 'OFF'}`)
-	callback(null, !!device.switcher.state.state)
-}
-
-const getOutletInUse = (callback) => {
-	if (!device.switcher) {
-		log('switcher has yet to connect')
-		callback('switcher has yet to connect')
-		return
-	}
-	const inUse = device.switcher.state.power_consumption > 0
-	log(`Switcher is ${inUse ? 'IN USE' : 'NOT IN USE'}`)
-	callback(null, inUse)
-}
-
-const setOn = (state, callback) => {
-	if (!device.switcher) {
-		log('switcher has yet to connect')
-		callback('switcher has yet to connect')
-		return
-	}
-	if (state) {
-		log('Turning ON Switcher')
-		device.switcher.turn_on() 
-	} else {
-		log('Turning OFF Switcher')
-		device.switcher.turn_off() 
-	}
-	callback()
-}
