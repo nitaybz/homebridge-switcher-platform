@@ -1,6 +1,6 @@
 const stateManager = require('../lib/stateManager')
 
-const Extras = (service) => {
+const Extras = function(service) {
 	const Characteristic = this.api.hap.Characteristic
 	if (this.accessory.context.duration)
 		this.duration = this.accessory.context.duration
@@ -14,7 +14,7 @@ const Extras = (service) => {
 		.setProps({
 			format: Characteristic.Formats.UINT32,
 			maxValue: 86340,
-			minValue: 3600,
+			minValue: 0,
 			minStep: 60,
 			perms: [Characteristic.Perms.READ, Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
 		})
@@ -54,7 +54,6 @@ const Extras = (service) => {
 	return  { 
 		updateHomeKit: () => {
 			service.getCharacteristic(Characteristic.RemainingDuration).updateValue(this.state.remaining_seconds)
-			service.getCharacteristic(Characteristic.SetDuration).updateValue(this.state.default_shutdown_seconds)
 			service.getCharacteristic(EnergyCharacteristics.Watts).getValue(null)
 			service.getCharacteristic(EnergyCharacteristics.Volts).getValue(null)
 			service.getCharacteristic(EnergyCharacteristics.Amperes).getValue(null)

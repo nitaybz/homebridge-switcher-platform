@@ -1,4 +1,4 @@
-const Switcher = require('./lib/Switcher')
+const Switcher = require('./lib/switcher')
 const PLUGIN_NAME = 'homebridge-switcher-boiler'
 const PLATFORM_NAME = 'SwitcherBoiler'
 module.exports = (api) => {
@@ -35,23 +35,12 @@ class SwitcherBoiler {
 				}))
 		}
 
-		this.api.on('didFinishLaunching', async () => {
-
-			await this.storage.init({
-				dir: this.persistPath,
-				forgiveParseErrors: true
-			})
-
-			Switcher.init(this)
-
-
-			
-		})
+		this.api.on('didFinishLaunching', Switcher.init.bind(this))
 
 	}
 
 	configureAccessory(accessory) {
-		this.log.easyDebug(`Found Cached Accessory: ${accessory.name} (${accessory.context.deviceId}) `)
+		this.log.easyDebug(`Found Cached Accessory: ${accessory.displayName} (${accessory.context.deviceId}) `)
 		this.accessories.push(accessory)
 	}
 }

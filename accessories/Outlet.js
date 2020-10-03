@@ -67,7 +67,7 @@ class Outlet {
 
 		
 		this.addOutletService()
-		this.extras = addExtras(this.OutletService)
+		this.extras = addExtras.bind(this)(this.OutletService)
 	}
 
 	addOutletService() {

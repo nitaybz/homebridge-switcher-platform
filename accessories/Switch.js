@@ -56,7 +56,7 @@ class Switch {
 
 		
 		this.addSwitchService()
-		this.extras = addExtras(this.SwitchService)
+		this.extras = addExtras.bind(this)(this.SwitchService)
 	}
 
 	addSwitchService() {

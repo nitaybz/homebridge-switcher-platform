@@ -56,7 +56,7 @@ class Valve {
 
 		
 		this.addValveService()
-		this.extras = addExtras(this.ValveService)
+		this.extras = addExtras.bind(this)(this.ValveService)
 	}
 
 	addValveService() {
