@@ -61,7 +61,7 @@ class Valve {
 
 	addValveService() {
 		this.log.easyDebug(`Adding Valve service for "${this.name}"`)
-		this.ValveService = this.accessory.getService(Service.Switch)
+		this.ValveService = this.accessory.getService(Service.Valve)
 		if (!this.ValveService)
 			this.ValveService = this.accessory.addService(Service.Valve, this.name, this.type)
 
