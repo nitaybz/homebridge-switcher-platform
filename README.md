@@ -25,19 +25,35 @@ The long waited plugin for the Switcher boiler/water-heater is here!<br>
 Easily discovers your device automatically without any prior steps needed.<br>
 **NO configuration needed, NO extraction of values or params, NO use of external scripts and method.**
 
-The plugin will expose 1 switch accessory representing the Switcher. When first initializing the plugin, it will scan for devices and retrieve device ID and device IP and will store them for the next restart (in case the device won't be online when initializing homebridge).
+The plugin will automatically expose all your Switcher devices and add them to HomeKit.
 
 #### NEW
-Multiple devices can be added as long as you can supply one of: **`deviceId`** OR **`ip`** OR **`deviceName`**
+Multiple devices can be added as long as you can supply one of: **`device ID`** OR **`IP`** OR **`device name`**
 
-## Version 2.0 Updates
+## The Super-Fast Version 3.0 !
+
+After the failure of version 2 to bring multiple Switcher devices into HomeKit, The plugin was completely refactored (again...) and is now a **PLATFORM** instead of accessory plugin.
+
+The platform plugin allows you to run one instance with one listening socket for all Switcher devices (with no conflicts).
+
+The plugin still maintain the old rule where you don't have to take any prior steps! it will detect and add **ALL** your switcher devices without any details from your side.
+
+One more addition to this version is the ability to set any duration from 1 minute. From now on the plugin will manage it's own default duration and will not affect the "Auto Shutdown" default in the Switcher app.
+
+**To upgrade from older versions, do the following:**
+
+1. Uninstall the plugin and remove from config.
+2. Restart HomeBridge
+3. Install the plugin (Make sure you are on version 3)
+4. Create new switcher config in the platform section
+5. Restart HomeBridge
+
+
+### from version 2:
+
 **The plugin is now JavaScript only!** which means, no dependency on python and better compatibility with all operating systems.
 
-You can now add safely more than one accessory, including Switcher smart sockets. You just need to supply some information about the device:
-
-1. If you will supply one identifier of following: `deviceId`  OR `ip`(device IP address) OR `deviceName` (The device name in Switcher app) the plugin will scan and search for a device with that identifier.
-2. If you'll supply `deviceId` and `ip`(device IP address). the plugin will automatically connect to the device without scanning the network.
-3. If you'll not supply any information about the device, the plugin will scan the network and connect to the first device it detects.
+You can now add safely more than one accessory, including Switcher smart sockets.
 
 Now, the plugin is always listening to the Switcher device and will always get status updates from the device every few seconds. Therefore `pollingIntervalInSec` is deprecated.
 
@@ -46,109 +62,233 @@ Now, the plugin is always listening to the Switcher device and will always get s
 # Installation
 
 
-This plugin is [HOOBS](https://hoobs.org/?ref=10876) certified and can be easily installed and configured through their UI.
+This plugin is HomeBridge verified and [HOOBS](https://hoobs.org/?ref=10876) certified and can be easily installed and configured through their UI.
 
-If you don't use HOOBS (or Homebridge UI), keep reading:
+If you don't use Homebridge UI or HOOBS, keep reading:
 
 
+1. Install homebridge using: `sudo npm install -g homebridge --unsafe-perm`
+2. Install this plugin using: `sudo npm install -g homebridge-switcher-boiler`
+3. Update your configuration file. See `config-sample.json` in this repository for a sample.
 
-1. Make sure you have Python installed (RaspberryPi OS and HOOBS usually come with Python pre-installed)
-2. Install homebridge using: `sudo npm install -g homebridge --unsafe-perm`
-3. Install this plugin using: `sudo npm install -g homebridge-switcher-boiler`
-4. Update your configuration file. See `config-sample.json` in this repository for a sample.
+## Config File Examples
 
-\* install from git: `sudo npm install -g git+https://github.com/nitaybz/homebridge-switcher-boiler.git`
+#### Easy Config
 
-## Config file
-
-#### Easy config (required)
-
-```
-"accessories": [
+``` json
+"platforms": [
     {
-        "accessory": "SwitcherBoiler",
-        "name": "Boiler"
+      "platform": "SwitcherBoiler",
+      "accessoryType": "switch"
     }
 ]
 ```
 
 #### Advanced config (optional)
 
-```
-"accessories": [
+###### * Do not copy-paste this code, it will not work!
+
+``` json
+"platforms": [
     {
-        "accessory": "SwitcherBoiler",
-        "name": "Boiler",
-        "accessoryType": "outlet",
-        "deviceId": "24eaf5",
-        "ip": "10.0.0.1",
-        "discoveryTimeout": 20,
-        "debug": false
-    },
-    {
-      "accessory": "SwitcherBoiler",
-      "name": "Switcher Socket",
+      "platform": "SwitcherBoiler",
+      "name": "Switcher Boiler",
       "accessoryType": "outlet",
-      "deviceName": "Bed Lamp",
-      "discoveryTimeout": 20,
-      "debug": false
+      "debug": false,
+      "secondsToRemove": 600,
+      "devices": [
+        {
+          "identifier": "24eaf5",
+          "accessoryType": "valve"
+        },
+        {
+          "identifier": "10.0.0.2",
+          "accessoryType": "outlet"
+        },
+        {
+          "identifier": "Desk Bulb",
+          "accessoryType": "switch"
+        },
+        {
+          "identifier": "21eac3",
+          "hide": true
+        }
+      ]
     }
 ]
 ```
 
 ### Configurations Table
 
-*advanced details below
+\* advanced details below
 
-|             Parameter            |                       Description                       | Required |  Default |   type   |
+|             Parameter            |                       Description                       |  Default |   type   |
 | -------------------------------- | ------------------------------------------------------- |:--------:|:--------:|:--------:|
-| `accessory`             | always `"SwitcherBoiler"`                                 |     ✓    |     -    |  String  |
-| `name`                  | Name for your Switcher accessory                        |     ✓    |     -    |  String  |
-| `accessoryType`        | Type of Accessory (`"switch"`, `"outlet"`, `"valve"`). read more below...|         |     `"switch"`    |  String  |
-| `deviceId`        | Device ID for discovery - can only be extracted via scripts or you can view the ID in this plugin logs|         |     `"24eaf5"`    |  String  |
-| `ip`        | IP address of the device for discovery. |         |     `"10.0.0.1"`    |  String  |
-| `deviceName`        | Device exact name from Switcher app for discovery. |         |     `"24eaf5"`    |  String  |
-| `discoveryTimeout`  |  Maximum time (in seconds) to wait for device discovery.   |          |  `20` |  Integer |
-| `debug`       |  When set to `true`, the plugin will produce extra logs for debugging purposes        |          |  `false` |  Boolean  |
+| `platform`  | always `"SwitcherBoiler"` |     -    |  String  |
+| `name`      | Platform name for logs  | `"SwitcherBolier"`    |  String  |
+| `accessoryType`        | Default type of accessory (`"switch"`, `"outlet"`, `"valve"`) for a new device. read more below...|  `"switch"`  |  String  |
+| `secondsToRemove`  |  Time in seconds to remove a device if it has not being discovered. set to 0 to not remove accessories at all.   |  `600` |  Integer |
+| `debug`       |  When set to `true`, the plugin will produce extra logs for debugging purposes        |  `false` |  Boolean  |
+| **Devices** | List of devices for custom settings (with the below information)| | Array| 
+| `Identifier`        | Can be Device ID, Device IP or Device Name. Needed in order to identify the device if you wish to set custom settings. |         |  String  |
+| `accessoryType`        | Specific device type of accessory (`"switch"`, `"outlet"`, `"valve"`). read more below...|  `"switch"`  |  String  |
+| `hide`| Set to `true` to remove this device from HomeKit | `false` |  Boolean  |
 
 # Advanced Control
 
-### Auto Detect Configurations
+## Auto Detect Configurations & Multiple Accessories
 
-The plugin will scan and search for your Switcher device in your network (No prior steps needed!). Once found, it will retrieve the device IP and device ID and store them locally to make sure it's available for the next time the system restarts in case the device won't be detectible.
-It is especially useful for situations where the Switcher device is temporarily down or not connected during system reboot.
+The plugin will scan and listen for messages from all your Switcher devices. When a message is received from a new Switcher device, the plugin will automatically add it to HomeKit in the form of a switch if not mentioned otherwise in `accessoryType` (read more [here](###accessory-types)).
+
+To change the device icon and functionality continue reading...
+
+## Advanced Config
+
+As mentioned above, the plugin will automatically add all devices as Switch Accessories (unless mentioned otherwise in the config under `accessoryType`)
+
+it's possible to set specific icon for a specific device.
+To achieve that you'll need to add `devices` to your config.
+
+Example:
+
+``` json
+"platforms": [
+    {
+      "platform": "SwitcherBoiler",
+      "devices": [
+        {
+          "identifier": "e4eaf6",
+          "accessoryType": "outlet",
+          "hide": false
+        }
+      ]
+    }
+]
+```
+
+###### * `"identifier"` is required for custom device settings
+
+### Identifier
+
+Identifier is required for the plugin to know what device you want to change settings for.
+
+To do that, you'll need to supply one of the following:
+
+1. Device ID - Can be found in the plugin logs or can be extracted via python scripts that are out there in the WWW.
+2. Device IP - Device IP address. Must be static if you're using this method.
+3. Device Name - Exactly as it's written in Switcher app.
+
+Set any of the above as `"identifier"`. Example:
+
+``` json
+"platforms": [
+    {
+      "platform": "SwitcherBoiler",
+      "devices": [
+        {
+          "identifier": "e4eaf6",
+          "accessoryType": "outlet"
+        },
+        {
+          "identifier": "10.0.0.1",
+          "accessoryType": "switch",
+        },
+        {
+          "identifier": "Boiler",
+          "accessoryType": "valve"
+        }
+      ]
+    }
+]
+```
+
+### Hide
+
+If you wish to exclude a Switcher device from HomeKit, just add `"hide": true` to your device config.
+
+Example:
+
+``` json
+"platforms": [
+    {
+      "platform": "SwitcherBoiler",
+      "devices": [
+        {
+          "identifier": "e4eaf6",
+          "hide": true
+        }
+      ]
+    }
+]
+```
+
+### Accessory Types
 
 
-### Multiple Accessories
 
-Since version 2.0, The plugin can support multiple accessories (including smart sockets). To achieve that, You'll need to duplicate the accessory config but also supply at least one piece of information about the device
+### Accessory Types
+`accessoryType` can be define both in the plugin level and in the device level.
+
+When a new device is discovered it will first look if `accessoryType` is defined in `devices` with it's own `identifier`, if not, it will look for `accessoryType` in the plugin level. if neither of those has been set, the plugin will use switch as default.
+
+Accessory Type for specific device:
+
+``` json
+"platforms": [
+    {
+      "platform": "SwitcherBoiler",
+      "devices": [
+        {
+          "identifier": "e4eaf6",
+          "accessoryType": "outlet"
+        }
+      ]
+    }
+]
+```
 
 
-### Skip Discovery
+Accessory Type for all devices:
 
-If you already know what is your device ID and device IP (the plugin prints those when it detect switcher device), you can add those to your config (`"deviceId"`, `"ip"`) and the plugin will skip the discovery and connect directly to the device. It will save some time till the device is functional after HomeBridge restart.
+``` json
+"platforms": [
+    {
+      "platform": "SwitcherBoiler",
+      "accessoryType": "outlet"
+    }
+]
+```
 
-
-### Accessory Type
-In the new version (>= 1.1.0) there are a lot more exciting options for your Switcher!
-First of all, I've added a lot of service to support both timer/auto-shutdown and getting information about the power consumption of the device.<br><br>
-All the new services are available for any accessory type that you choose (in Eve app or most of 3rd party apps).
-However, in Home app it is not possible to present an accessory with all those functionalities, especially since it doesn't support power consumption.<br>
-
-To overcome this limit I gave you the possibility to choose what would be the best option for you to see in Home app:
 
 #### Switch (default)
-When you just want a normal switch (like version 1) and don't need anything else. (all services will still appear in 3rd party apps)
+When you just want a normal switch (like version 1) and don't need anything else. (all [extra services](###extras) will still appear in 3rd party apps)
 
 #### Outlet
 Choose `"accessoryType": "outlet"` if you are most interested in the power consumption stats and automations. Outlet accessory will reveal the service "In Use" which will only be active if your boiler is ON and consume energy. it will not be active when the boiler has reached it's temperature limit and no power is used (even if the switcher is ON -  accessory will show on but not "in use").<br>
 Choosing outlet will also track your power consumption.<br>
 **Eve app only**: history and stats and will even calculate yearly costs after it collected enough data.
 
+Read more about it [here](###extras)
+
 
 #### Water Valve
-Choosing `"accessoryType": "valve"` will give you the possibility to control your auto-shutdown time from the Home app and therefore affect the time the device will be on before forcing shutdown.<br>
-You should be **AWARE** that changing the duration time in HomeKit will affect in changing you auto-shutdown time in Switcher which will of course affect the auto-shutdown time even when you turn the device manually.
+Choosing `"accessoryType": "valve"` will give you the possibility to control your auto-shutdown time from the Home app and therefore affect the time the device will be on before forcing shutdown.
+
+
+~~You should be **AWARE** that changing the duration time in HomeKit will affect in changing your auto-shutdown time in Switcher which will of course affect the auto-shutdown time even when you turn the device manually.~~
+
+Since version 3, The plugin manage it's own "Auto Shutdown" duration. Now you are able to set any amount of time between 1 minute to 23:59 hours.
+Next time you'll turn on the switcher from the Home App it will be turned ON only for the amount of time you've set in HomeKit.
+
+### Extras
+
+Since version 1.1.0 there are a lot more exciting options for your Switcher!
+First of all, I've added a lot of services to support both timer/auto-shutdown and getting information about the power consumption of the device.
+
+All the new services are available for any accessory type that you choose (in Eve app or most of 3rd party apps).
+However, in Home app it is not possible to present an accessory with all those functionalities, especially since it doesn't support power consumption.
+
+To overcome this limit I gave you the possibility to choose what would be the best option for you to see in Home app.
 
 ### New Services and Eve App
 

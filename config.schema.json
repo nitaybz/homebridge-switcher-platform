@@ -1,55 +1,29 @@
 {
     "pluginAlias": "SwitcherBoiler",
-    "pluginType": "accessory",
-    "singular": false,
-    "headerDisplay": "Homebridge plugin for Switcher - Boiler / Water-Heater",
+    "pluginType": "platform",
+    "singular": true,
+    "headerDisplay": "Homebridge plugin for Switcher - Boiler / Water-Heater<br>if you're having troubles installing the plugin, please Read the <a target=\"_blank\" href=\"https://github.com/nitaybz/homebridge-switcher-boiler/blob/master/README.md\">README.md</a> file fully, and submit an issue if the problem persist",
     "footerDisplay": "Created by @nitaybz",
     "schema": {
         "type": "object",
         "properties": {
             "name": {
-                "title": "Accessory Name",
-                "description": "Name for your Switcher accessory",
+                "title": "Plugin Name (for logs)",
                 "type": "string",
-                "default": "Boiler",
-                "required": true
+                "default": "Switcher Boiler",
+                "required": false
             },
             "accessoryType": {
                 "title": "Accessory Type",
-                "description": "Accessory Type and Icon - affect functionality (read more in the README.md file)",
+                "description": "Accessory Type and Icon for all discovered devices - affect functionality (read more <a target=\"_blank\" href=\"https://github.com/nitaybz/homebridge-switcher-boiler/blob/master/README.md#accessory-type\">here</a>)",
                 "type": "string",
                 "default": "switch",
-                "required": true,
+                "required": false,
                 "oneOf": [
                   { "title": "Switch", "enum": ["switch"] },
                   { "title": "Outlet", "enum": ["outlet"] },
                   { "title": "Water Valve", "enum": ["valve"] }
                 ]
-            },
-            "deviceId": {
-                "title": "Device ID",
-                "description": "Device ID for discovery - can only be extracted via scripts or you can view the ID in this plugin logs",
-                "type": "string",
-                "required": false
-            },
-            "ip": {
-                "title": "Device IP Address",
-                "description": "IP address of the device for discovery.",
-                "type": "string",
-                "required": false
-            },
-            "deviceName": {
-                "title": "Switcher Device Name",
-                "description": "Device exact name from Switcher app for discovery.",
-                "type": "string",
-                "required": false
-            },
-            "discoveryTimeout": {
-                "title": "Discovery Timeout in Seconds",
-                "description": "Maximum time (in seconds) to wait for device discovery.",
-                "type": "integer",
-                "default": 20,
-                "required": false
             },
             "debug": {
                 "title": "Enable Debug Logs",
@@ -57,7 +31,77 @@
                 "type": "boolean",
                 "default": false,
                 "required": false
+            },
+            "secondsToRemove": {
+                "title": "Seconds to remove disconnected device",
+                "description": "Time in seconds to remove a device if it has not being discovered (default is 10 minutes). set 0 to not remove accessories at all.",
+                "type": "integer",
+                "default": 600,
+                "required": false
+            },
+            "devices": {
+                "type": "array",
+                "required": false,
+                "items": {
+                  "title": "Custom Devices Settings",
+                  "type": "object",
+                  "properties": {
+
+                    "identifier": {
+                        "title": "Identifier (Device ID, device IP or Device Name)",
+                        "description": "Identifier is needed to set custom settings for a specific device. use one of the above as identifier so the plugin will know which device you wish to setup",
+                        "type": "string",
+                        "required": true
+                    },
+                    "accessoryType": {
+                        "title": "Accessory Type",
+                        "description": "Accessory Type and Icon for this specific device - affect functionality (read more in the <a target=\"_blank\" href=\"https://github.com/nitaybz/homebridge-switcher-boiler/blob/master/README.md\">README.md</a> file)",
+                        "type": "string",
+                        "required": false,
+                        "oneOf": [
+                          { "title": "Switch", "enum": ["switch"] },
+                          { "title": "Outlet", "enum": ["outlet"] },
+                          { "title": "Water Valve", "enum": ["valve"] }
+                        ]
+                    },
+                    "hide": {
+                        "title": "Hide Device",
+                        "description": "Enable to remove this device from HomeKit",
+                        "type": "boolean",
+                        "required": false
+                    }
+
+                  }
+                }
             }
         }
-    }
+    },
+      "layout": [
+        {
+          "key": "name"
+        },
+        {
+          "key": "accessoryType"
+        },
+        {
+          "key": "debug"
+        },
+        {
+          "key": "secondsToRemove"
+        },
+        {
+          "key": "devices",
+          "type": "array",
+          "title": "Custom Devices Settings",
+          "orderable": false,
+          "buttonText": "Add Device",
+          "expandable": true,
+          "expanded": false,
+          "items": [
+            "devices[].identifier",
+            "devices[].accessoryType",
+            "devices[].hide"
+            ]
+        }
+      ]
   }

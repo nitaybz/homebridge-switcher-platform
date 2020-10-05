@@ -6,30 +6,35 @@
     "pin": "031-45-154"
   },
 
-  "description": "This is an example configuration for the switcher-boiler homebridge plugin",
+  "description": "This is an advanced example configuration for the switcher-boiler homebridge plugin",
   "platforms": [
+    {
+      "platform": "SwitcherBoiler",
+      "name": "Switcher Boiler",
+      "accessoryType": "switch",
+      "debug": false,
+      "secondsToRemove": 600,
+      "devices": [
+        {
+          "identifier": "24eaf5",
+          "accessoryType": "valve"
+        },
+        {
+          "identifier": "10.0.0.2",
+          "accessoryType": "outlet"
+        },
+        {
+          "identifier": "Desk Bulb",
+          "accessoryType": "switch"
+        },
+        {
+          "identifier": "21eac3",
+          "hide": true
+        }
+      ]
+    }
   ],
 
   "accessories": [
-    {
-      "accessory": "SwitcherBoiler",
-      "name": "Switcher Boiler",
-      "accessoryType": "switch",
-      "deviceId": "24eaf5",
-      "ip": "10.0.0.1",
-      "deviceName": "Boiler",
-      "discoveryTimeout": 20,
-      "debug": false
-    },
-    {
-      "accessory": "SwitcherBoiler",
-      "name": "Switcher Socket",
-      "accessoryType": "outlet",
-      "deviceId": "e23d45",
-      "ip": "10.0.0.2",
-      "deviceName": "Bed Lamp",
-      "discoveryTimeout": 20,
-      "debug": false
-    }
   ]
 }
