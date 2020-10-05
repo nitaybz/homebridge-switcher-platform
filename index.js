@@ -16,11 +16,10 @@ class SwitcherBoiler {
 		this.PLUGIN_NAME = PLUGIN_NAME
 		this.PLATFORM_NAME = PLATFORM_NAME
 		this.name = config.name || PLATFORM_NAME
-
+		this.accessoryType = config.accessoryType
 		this.devices = config.devices || []
-		this.secondsToRemove = config.secondsToRemove || 600
+		this.secondsToRemove = (config.secondsToRemove === null || config.secondsToRemove === undefined) ? 600 : config.secondsToRemove
 		this.debug = config.debug || false
-		this.persistPath = this.api.user.persistPath() + '/../switcher-persist'
 
 		
 		// define debug method to output debug logs when enabled in the config

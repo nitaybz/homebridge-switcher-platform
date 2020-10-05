@@ -6,31 +6,29 @@
     "pin": "031-45-154"
   },
 
-  "description": "This is an example configuration for the switcher-boiler homebridge plugin",
+  "description": "This is an advanced example configuration for the switcher-boiler homebridge plugin",
   "platforms": [
     {
       "platform": "SwitcherBoiler",
       "name": "Switcher Boiler",
+      "accessoryType": "switch",
       "debug": false,
-      "secondsToRemove": 180,
+      "secondsToRemove": 600,
       "devices": [
         {
-          "accessoryType": "outlet",
-          "ip": "10.0.0.2",
-          "deviceId": "e4eaf6"
+          "identifier": "24eaf5",
+          "accessoryType": "valve"
         },
         {
-          "accessoryType": "valve",
-          "ip": "10.0.0.1",
-          "deviceId": "24eaf5",
-          "deviceName": "Boiler"
+          "identifier": "10.0.0.2",
+          "accessoryType": "outlet"
         },
         {
-          "accessoryType": "switch",
-          "deviceName": "Desk Bulb"
+          "identifier": "Desk Bulb",
+          "accessoryType": "switch"
         },
         {
-          "deviceId": "21eac3",
+          "identifier": "21eac3",
           "hide": true
         }
       ]
