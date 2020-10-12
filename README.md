@@ -1,4 +1,4 @@
-<img src="branding/hoobs_homebridge_switcher.svg" width="700px">
+<img src="branding/switcher_homebridge.png" width="500px">
 
 # homebridge-switcher-boiler
 
