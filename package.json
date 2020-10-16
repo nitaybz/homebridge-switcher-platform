@@ -29,7 +29,7 @@
     "switcher-js2": "^1.1.1"
   },
   "devDependencies": {
-    "eslint": "^7.1.0"
+    "eslint": "^7.11.0"
   },
   "scripts": {
     "lint": "eslint .",
