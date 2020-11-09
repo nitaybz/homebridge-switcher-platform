@@ -13,9 +13,17 @@
 
 ### Requirements
 
+One of this model (minimum firmware required)
+- Switcher V3: (Switcher touch) - min firmware V1.51
+- Switcher V2: min firmware 3.21 (Based on ESP chipset)
+- Switcher V2: min firmware72.32 (Qualcomm chipset)
+- Switcher mini
+- Switcher Smart Socket
+
+Your Homebridge/Hoobs machine clock/time must be accurate. The easiest way to check if it's correct is to check the current logs. If time is not accurate, google on how to set it correctly on your machine.
+
 <img src="https://img.shields.io/badge/node-%3E%3D10.17-brightgreen"> &nbsp;
-<img src="https://img.shields.io/badge/homebridge-%3E%3D0.4.4-brightgreen"> &nbsp;
-<img src="https://img.shields.io/badge/python-installed-brightgreen">
+<img src="https://img.shields.io/badge/homebridge-%3E%3D0.4.4-brightgreen">
 
 check with: `node -v` & `homebridge -V` and update if needed
 
@@ -309,6 +317,17 @@ check the following screenshot and explanations:<br><br>
 **Remaining** - Shows the remaining time until the boiler will shut off<br>
 
 ## Issues & Debug
+
+#### I can see status but I can't control
+
+Check that you have the latest firmware installed and that your homebridge machine clock is accurate.
+
+#### My Switcher is not showing up in HomeKit
+
+Please verify that your Switcher device is connected to the network and under the same subnet as Homebridge.
+
+### other
+
 
 If you experience any issues with the plugins please refer to the [Issues](https://github.com/nitaybz/homebridge-switcher-boiler/issues) tab or [Switcher-Boiler Discord Channel](https://discord.gg/7DyabQ6) and check if your issue is already described there, if it doesn't, please report a new issue with as much detailed information as you can give (logs are crucial).<br>
 if you want to even speed up the process, you can add `"debug": true` to your config, which will give me more details on the logs and speed up fixing the issue.
