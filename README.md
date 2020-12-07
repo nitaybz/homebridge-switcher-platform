@@ -130,8 +130,8 @@ If you don't use Homebridge UI or HOOBS, keep reading:
 
 \* advanced details below
 
-|             Parameter            |                       Description                       |  Default |   type   |
-| -------------------------------- | ------------------------------------------------------- |:--------:|:--------:|:--------:|
+|     Parameter |        Description      |  Default |   type   |
+|:--------------|:------------------------|:--------:|:--------:|
 | `platform`  | always `"SwitcherBoiler"` |     -    |  String  |
 | `name`      | Platform name for logs  | `"SwitcherBolier"`    |  String  |
 | `accessoryType`        | Default type of accessory (`"switch"`, `"outlet"`, `"valve"`) for a new device. read more below...|  `"switch"`  |  String  |
