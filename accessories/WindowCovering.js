@@ -1,10 +1,8 @@
 let Characteristic, Service
 const stateManager = require('../lib/stateManager')
-const addExtras = require('./extras')
 
-class Switch {
+class WindowCovering {
 	constructor(switcher, switcherInfo, platform) {
-
 		Service = platform.api.hap.Service
 		Characteristic = platform.api.hap.Characteristic
 		
@@ -15,13 +13,13 @@ class Switch {
 		this.ip = switcherInfo.device_ip
 		this.name = switcherInfo.name
 		this.serial = this.id
-		this.model = switcherInfo.type
+		this.model = 'switcher-boiler'
 		this.manufacturer = 'Switcher'
-		this.type = 'Switch'
+		this.type = 'WindowCovering'
 		this.displayName = this.name
 		this.state = switcherInfo.state
 		this.processing = false
-		
+
 		this.UUID = this.api.hap.uuid.generate(this.id)
 		this.accessory = platform.accessories.find(accessory => accessory.UUID === this.UUID)
 
@@ -36,10 +34,7 @@ class Switch {
 			this.api.registerPlatformAccessories(platform.PLUGIN_NAME, platform.PLATFORM_NAME, [this.accessory])
 		} else {
 			this.log(`Switcher "${this.name}" (${this.id}) is Connected!`)
-			if (this.type !== this.accessory.context.type) {
-				this.removeOtherTypes()
-				this.accessory.context.type = this.type
-			}
+			this.accessory.context.type = this.type
 		}
 
 		this.accessory.context.ip = this.ip
@@ -55,45 +50,37 @@ class Switch {
 			.setCharacteristic(Characteristic.SerialNumber, this.serial)
 
 		
-		this.addSwitchService()
-		this.extras = addExtras.bind(this)(this.SwitchService)
+		this.addWindowCoveringService()
 	}
 
-	addSwitchService() {
-		this.log.easyDebug(`Adding Switch service for "${this.name}"`)
-		this.SwitchService = this.accessory.getService(Service.Switch)
-		if (!this.SwitchService)
-			this.SwitchService = this.accessory.addService(Service.Switch, this.name, this.type)
+	addWindowCoveringService() {
+		this.log.easyDebug(`Adding WindowCovering service for "${this.name}"`)
+		this.WindowCoveringService = this.accessory.getService(Service.WindowCovering)
+		if (!this.WindowCoveringService)
+			this.WindowCoveringService = this.accessory.addService(Service.WindowCovering, this.name, this.type)
 
+		this.WindowCoveringService.getCharacteristic(Characteristic.CurrentPosition)
+			.on('get', stateManager.get.CurrentPosition.bind(this))
+			.updateValue(this.state.position)
 
-		this.SwitchService.getCharacteristic(Characteristic.On)
-			.on('get', stateManager.get.On.bind(this))
-			.on('set', stateManager.set.On.bind(this))
-	}
+		this.WindowCoveringService.getCharacteristic(Characteristic.PositionState)
+			.on('get', stateManager.get.PositionState.bind(this))
+			.updateValue(this.state.direction === 'DOWN' ? 0 : this.state.direction === 'UP' ? 1 : 2)
 
-	removeOtherTypes() {
-
-		// remove valve service
-		const ValveService = this.accessory.getService(Service.Valve)
-		if (ValveService) {
-			this.log.easyDebug(`Removing Valve Service from ${this.name}`)
-			this.accessory.removeService(ValveService)
-		}
-
-		// remove outlet service
-		const OutletService = this.accessory.getService(Service.Outlet)
-		if (OutletService) {
-			this.log.easyDebug(`Removing Outlet Service from ${this.name}`)
-			this.accessory.removeService(OutletService)
-		}
+		this.WindowCoveringService.getCharacteristic(Characteristic.TargetPosition)
+			.on('set', stateManager.set.TargetPosition.bind(this))
+			.updateValue(this.state.position)
 	}
 
 	updateState(state) {
 		this.state = state
-		this.SwitchService.getCharacteristic(Characteristic.On).updateValue(!!this.state.power)
-		this.extras.updateHomeKit()
+		const positionState = this.state.direction === 'DOWN' ? 0 : this.state.direction === 'UP' ? 1 : 2
+		this.WindowCoveringService.getCharacteristic(Characteristic.CurrentPosition).updateValue(this.state.position)
+		this.WindowCoveringService.getCharacteristic(Characteristic.PositionState).updateValue(positionState)
+		if (positionState === 2)
+			this.WindowCoveringService.getCharacteristic(Characteristic.TargetPosition).updateValue(this.state.position)
 	}
 }
 
 
-module.exports = Switch
+module.exports = WindowCovering

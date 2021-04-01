@@ -6,14 +6,13 @@
     "pin": "031-45-154"
   },
 
-  "description": "This is an advanced example configuration for the switcher-boiler homebridge plugin",
+  "description": "This is an advanced example configuration for the switcher-platform homebridge plugin",
   "platforms": [
     {
-      "platform": "SwitcherBoiler",
-      "name": "Switcher Boiler",
-      "accessoryType": "switch",
+      "platform": "SwitcherPlatform",
+      "name": "Switcher Platform",
       "debug": false,
-      "secondsToRemove": 600,
+      "secondsToRemove": 0,
       "devices": [
         {
           "identifier": "24eaf5",
@@ -30,6 +29,16 @@
         {
           "identifier": "21eac3",
           "hide": true
+        }
+      ],
+      "customTimers": [
+        {
+          "identifier": "24eaf5",
+          "shutdownMinutes": 30
+        },
+        {
+          "identifier": "24eaf5",
+          "shutdownMinutes": 60
         }
       ]
     }

@@ -15,7 +15,7 @@ class Valve {
 		this.ip = switcherInfo.device_ip
 		this.name = switcherInfo.name
 		this.serial = this.id
-		this.model = 'switcher-boiler'
+		this.model = switcherInfo.type
 		this.manufacturer = 'Switcher'
 		this.type = 'Valve'
 		this.displayName = this.name

@@ -1,24 +1,27 @@
 <img src="branding/switcher_homebridge.png" width="500px">
 
-# homebridge-switcher-boiler
+# homebridge-switcher-platform
 
 [![Downloads](https://img.shields.io/npm/dt/homebridge-switcher-boiler.svg?color=critical)](https://www.npmjs.com/package/homebridge-switcher-boiler)
 [![Version](https://img.shields.io/npm/v/homebridge-switcher-boiler)](https://www.npmjs.com/package/homebridge-switcher-boiler)<br>
 [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins) [![Homebridge Discord](https://img.shields.io/discord/432663330281226270?color=728ED5&logo=discord&label=discord)](https://discord.gg/7DyabQ6)<br>
 [![certified-hoobs-plugin](https://badgen.net/badge/HOOBS/Certified/yellow)](https://plugins.hoobs.org?ref=10876) [![hoobs-support](https://badgen.net/badge/HOOBS/Support/yellow)](https://support.hoobs.org?ref=10876)
 
-[Homebridge](https://github.com/nfarina/homebridge) plugin for Switcher - Boiler / Water Heater (and smart sockets)
-
-  <img src="branding/products.png" width="500px">
+[Homebridge](https://github.com/nfarina/homebridge) plugin for [Switcher](https://switcher.co.il/)  Smart Accessories
+<img src="branding/products.png" width="500px">
 
 ### Requirements
 
 One of this model (minimum firmware required)
-- Switcher V3: (Switcher touch) - min firmware V1.51
+
+- Switcher V3: (Switcher Touch) - min firmware V1.51
 - Switcher V2: min firmware 3.21 (Based on ESP chipset)
 - Switcher V2: min firmware72.32 (Qualcomm chipset)
-- Switcher mini
+- Switcher Mini
 - Switcher Smart Socket
+- Switcher V4
+- Switcher Runner
+- Switcher Runner Mini
 
 Your Homebridge/Hoobs machine clock/time must be accurate. The easiest way to check if it's correct is to check the current logs. If time is not accurate, google on how to set it correctly on your machine.
 
@@ -35,45 +38,23 @@ Easily discovers your device automatically without any prior steps needed.<br>
 
 The plugin will automatically expose all your Switcher devices and add them to HomeKit.
 
-#### NEW
-Multiple devices can be added as long as you can supply one of: **`device ID`** OR **`IP`** OR **`device name`**
+## Version 4 - \*\*BREAKING CHANGES\*\*
 
-## The Super-Fast Version 3.0 !
+Version 4 includes the following improvements:
 
-After the failure of version 2 to bring multiple Switcher devices into HomeKit, The plugin was completely refactored (again...) and is now a **PLATFORM** instead of accessory plugin.
+- **Support for Switcher Runner (blinds/roller-shutters)**
+- Added [Custom Timers](###custom-timers) - The ability to create virtual switches that will turn on your boiler for X minutes
+- Automatically detect device types and match with default icon (socket for socket, currently switch for boiler)
+- Removed default 'Accessory Type' for all devices
+- Changed plugin name to homebridge-switcher-platform
 
-The platform plugin allows you to run one instance with one listening socket for all Switcher devices (with no conflicts).
-
-The plugin still maintain the old rule where you don't have to take any prior steps! it will detect and add **ALL** your switcher devices without any details from your side.
-
-One more addition to this version is the ability to set any duration from 1 minute. From now on the plugin will manage it's own default duration and will not affect the "Auto Shutdown" default in the Switcher app.
-
-**To upgrade from older versions, do the following:**
-
-1. Uninstall the plugin and remove from config.
-2. Restart HomeBridge
-3. Install the plugin (Make sure you are on version 3)
-4. Create new switcher config in the platform section
-5. Restart HomeBridge
-
-
-### from version 2:
-
-**The plugin is now JavaScript only!** which means, no dependency on python and better compatibility with all operating systems.
-
-You can now add safely more than one accessory, including Switcher smart sockets.
-
-Now, the plugin is always listening to the Switcher device and will always get status updates from the device every few seconds. Therefore `pollingIntervalInSec` is deprecated.
-
-
+Some things changed in the plugin that might break the way it works for you, you might need to uninstall and reinstall the plugin which will lead to removal of the accessories and the need to recreate scenes and automations - BE WARNED!
 
 # Installation
-
 
 This plugin is HomeBridge verified and [HOOBS](https://hoobs.org/?ref=10876) certified and can be easily installed and configured through their UI.
 
 If you don't use Homebridge UI or HOOBS, keep reading:
-
 
 1. Install homebridge using: `sudo npm install -g homebridge --unsafe-perm`
 2. Install this plugin using: `sudo npm install -g homebridge-switcher-boiler`
@@ -86,7 +67,7 @@ If you don't use Homebridge UI or HOOBS, keep reading:
 ``` json
 "platforms": [
     {
-      "platform": "SwitcherBoiler",
+      "platform": "SwitcherPlatform",
       "accessoryType": "switch"
     }
 ]
@@ -99,11 +80,11 @@ If you don't use Homebridge UI or HOOBS, keep reading:
 ``` json
 "platforms": [
     {
-      "platform": "SwitcherBoiler",
-      "name": "Switcher Boiler",
+      "platform": "SwitcherPlatform",
+      "name": "Switcher Platform",
       "accessoryType": "outlet",
       "debug": false,
-      "secondsToRemove": 600,
+      "secondsToRemove": 0,
       "devices": [
         {
           "identifier": "24eaf5",
@@ -121,6 +102,16 @@ If you don't use Homebridge UI or HOOBS, keep reading:
           "identifier": "21eac3",
           "hide": true
         }
+      ],
+      "customTimers": [
+        {
+          "identifier": "24eaf5",
+          "shutdownMinutes": 30
+        },
+        {
+          "identifier": "24eaf5",
+          "shutdownMinutes": 60
+        }
       ]
     }
 ]
@@ -132,27 +123,31 @@ If you don't use Homebridge UI or HOOBS, keep reading:
 
 |     Parameter |        Description      |  Default |   type   |
 |:--------------|:------------------------|:--------:|:--------:|
-| `platform`  | always `"SwitcherBoiler"` |     -    |  String  |
+| `platform`  | always `"SwitcherPlatform"` |     -    |  String  |
 | `name`      | Platform name for logs  | `"SwitcherBolier"`    |  String  |
-| `accessoryType`        | Default type of accessory (`"switch"`, `"outlet"`, `"valve"`) for a new device. read more below...|  `"switch"`  |  String  |
-| `secondsToRemove`  |  Time in seconds to remove a device if it has not being discovered. set to 0 to not remove accessories at all.   |  `600` |  Integer |
+| `secondsToRemove`  |  Time in seconds to remove a device if it has not being discovered. set to 0 to not remove accessories at all.   |  `0` |  Integer |
 | `debug`       |  When set to `true`, the plugin will produce extra logs for debugging purposes        |  `false` |  Boolean  |
-| **Devices** | List of devices for custom settings (with the below information)| | Array| 
+| **devices** | List of devices for custom settings (with the below information)| | Array| 
 | `Identifier`        | Can be Device ID, Device IP or Device Name. Needed in order to identify the device if you wish to set custom settings. |         |  String  |
 | `accessoryType`        | Specific device type of accessory (`"switch"`, `"outlet"`, `"valve"`). read more below...|  `"switch"`  |  String  |
 | `hide`| Set to `true` to remove this device from HomeKit | `false` |  Boolean  |
-
+| **customTimers** | List of switches for custom timers (with the below information)| | Array| 
+| `Identifier`        | Can be Device ID, Device IP or Device Name. Needed in order to identify the device if you wish to set custom timer for. |         |  String  |
+| `shutdownMinutes`        | Define how many minutes to run the boiler ON before shutting it OFF automatically |        |  Integer  |
 # Advanced Control
 
 ## Auto Detect Configurations & Multiple Accessories
 
-The plugin will scan and listen for messages from all your Switcher devices. When a message is received from a new Switcher device, the plugin will automatically add it to HomeKit in the form of a switch if not mentioned otherwise in `accessoryType` (read more [here](###accessory-types)).
+The plugin will scan and listen for messages from all your Switcher devices. When a message is received from a new Switcher device, the plugin will automatically add it to HomeKit in it's default icon and functionality
+Power Plug => Outlet
+Boiler => Switch (for now, until apple will fix the valve accessory duration issue)
+Runner => Window Covering (type cannot be changed)
 
 To change the device icon and functionality continue reading...
 
 ## Advanced Config
 
-As mentioned above, the plugin will automatically add all devices as Switch Accessories (unless mentioned otherwise in the config under `accessoryType`)
+As mentioned above, the plugin will automatically add all devices as Switch Accessories (unless mentioned otherwise in the config under it's default type)
 
 it's possible to set specific icon for a specific device.
 To achieve that you'll need to add `devices` to your config.
@@ -162,7 +157,7 @@ Example:
 ``` json
 "platforms": [
     {
-      "platform": "SwitcherBoiler",
+      "platform": "SwitcherPlatform",
       "devices": [
         {
           "identifier": "e4eaf6",
@@ -191,7 +186,7 @@ Set any of the above as `"identifier"`. Example:
 ``` json
 "platforms": [
     {
-      "platform": "SwitcherBoiler",
+      "platform": "SwitcherPlatform",
       "devices": [
         {
           "identifier": "e4eaf6",
@@ -219,7 +214,7 @@ Example:
 ``` json
 "platforms": [
     {
-      "platform": "SwitcherBoiler",
+      "platform": "SwitcherPlatform",
       "devices": [
         {
           "identifier": "e4eaf6",
@@ -230,21 +225,19 @@ Example:
 ]
 ```
 
-### Accessory Types
+### Accessory Type
 
+Changing accessory type can change the icon the functionality.<br>
+`accessoryType` can be define in the device custom settings level.
 
+When a new device is discovered it will first look if `accessoryType` is defined in `devices` with it's own `identifier`, if not, it will use it's default.
 
-### Accessory Types
-`accessoryType` can be define both in the plugin level and in the device level.
-
-When a new device is discovered it will first look if `accessoryType` is defined in `devices` with it's own `identifier`, if not, it will look for `accessoryType` in the plugin level. if neither of those has been set, the plugin will use switch as default.
-
-Accessory Type for specific device:
+Custom accessory type for a device:
 
 ``` json
 "platforms": [
     {
-      "platform": "SwitcherBoiler",
+      "platform": "SwitcherPlatform",
       "devices": [
         {
           "identifier": "e4eaf6",
@@ -255,18 +248,7 @@ Accessory Type for specific device:
 ]
 ```
 
-
-Accessory Type for all devices:
-
-``` json
-"platforms": [
-    {
-      "platform": "SwitcherBoiler",
-      "accessoryType": "outlet"
-    }
-]
-```
-
+\* Switcher Runner (blinds) accessory type, cannot be changed
 
 #### Switch (default)
 When you just want a normal switch (like version 1) and don't need anything else. (all [extra services](###extras) will still appear in 3rd party apps)
@@ -281,9 +263,6 @@ Read more about it [here](###extras)
 
 #### Water Valve
 Choosing `"accessoryType": "valve"` will give you the possibility to control your auto-shutdown time from the Home app and therefore affect the time the device will be on before forcing shutdown.
-
-
-~~You should be **AWARE** that changing the duration time in HomeKit will affect in changing your auto-shutdown time in Switcher which will of course affect the auto-shutdown time even when you turn the device manually.~~
 
 Since version 3, The plugin manage it's own "Auto Shutdown" duration. Now you are able to set any amount of time between 1 minute to 23:59 hours.
 Next time you'll turn on the switcher from the Home App it will be turned ON only for the amount of time you've set in HomeKit.
@@ -316,11 +295,44 @@ check the following screenshot and explanations:<br><br>
 **Default Duration** - Auto-Shutdown time, affecting the Auto-Shutdown setting in Switcher app and the max heating duration. possible inputs are between 1 hour to 23:59 hours<br>
 **Remaining** - Shows the remaining time until the boiler will shut off<br>
 
+
+### Custom Timers
+
+Since Version 4 of this plugin you can create virtual switches that will turn on your boiler for X minutes. 2 seconds after turning on the boiler, the virtual switch will turn off automatically (and will not represent the state of the boiler).
+
+This is very useful, especially since the iOS 14 bug that prevents you from setting the duration in the Home app.
+
+Custom timers for a device:
+
+``` json
+"platforms": [
+    {
+      "platform": "SwitcherPlatform",
+      "customTimers": [
+        {
+          "identifier": "24eaf5",
+          "shutdownMinutes": 30
+        },
+        {
+          "identifier": "24eaf5",
+          "shutdownMinutes": 60
+        }
+      ]
+    }
+]
+```
+
+\* Only for Boiler
+
 ## Issues & Debug
 
 #### I can see status but I can't control
 
 Check that you have the latest firmware installed and that your homebridge machine clock is accurate.
+#### When using valve, I can only see 5 and 10 minutes
+
+This is a known iOS bug since iOS 14 release... I guess we can only wait for Apple to fix it.
+in the meantime, use the Eve app to control the duration.
 
 #### My Switcher is not showing up in HomeKit
 
