@@ -68,7 +68,7 @@ class WindowCovering {
 			.updateValue(this.state.direction === 'DOWN' ? 0 : this.state.direction === 'UP' ? 1 : 2)
 
 		this.WindowCoveringService.getCharacteristic(Characteristic.TargetPosition)
-			.on('set', stateManager.set.TargetPosition.bind(this))
+			.on('set', stateManager.set.TargetPosition.bind(this, Characteristic))
 			.updateValue(this.state.position)
 	}
 
