@@ -18,7 +18,7 @@ One of this model (minimum firmware required)
 - Switcher V2: min firmware 3.21 (Based on ESP chipset)
 - Switcher V2: min firmware72.32 (Qualcomm chipset)
 - Switcher Mini
-- Switcher Smart Socket
+- Switcher Power Plug
 - Switcher V4
 - Switcher Runner
 - Switcher Runner Mini
@@ -32,7 +32,7 @@ check with: `node -v` & `homebridge -V` and update if needed
 
 ## Description
 
-The long waited plugin for the Switcher boiler/water-heater is here!<br>
+The long waited plugin for the Switcher accessories is here!<br>
 Easily discovers your device automatically without any prior steps needed.<br>
 **NO configuration needed, NO extraction of values or params, NO use of external scripts and method.**
 
@@ -42,11 +42,13 @@ The plugin will automatically expose all your Switcher devices and add them to H
 
 Version 4 includes the following improvements:
 
-- **Support for Switcher Runner (blinds/roller-shutters)**
+- **Support for Switcher Runner (blinds/roller-shutter)**
 - Added [Custom Timers](###custom-timers) - The ability to create virtual switches that will turn on your boiler for X minutes
-- Automatically detect device types and match with default icon (socket for socket, currently switch for boiler)
+- Automatically detect device types and match with default icon: Boiler > Water Valve, Power Plug > Outlet, Switcher Runner > Window Covering
+- Removed duration from 'Power Plug' devices
 - Removed default 'Accessory Type' for all devices
 - Changed plugin name to homebridge-switcher-platform
+- Added power consumption tracking for all accessories (Eve app only)
 
 Some things changed in the plugin that might break the way it works for you, you might need to uninstall and reinstall the plugin which will lead to removal of the accessories and the need to recreate scenes and automations - BE WARNED!
 
@@ -67,8 +69,7 @@ If you don't use Homebridge UI or HOOBS, keep reading:
 ``` json
 "platforms": [
     {
-      "platform": "SwitcherPlatform",
-      "accessoryType": "switch"
+      "platform": "SwitcherPlatform"
     }
 ]
 ```
@@ -82,7 +83,6 @@ If you don't use Homebridge UI or HOOBS, keep reading:
     {
       "platform": "SwitcherPlatform",
       "name": "Switcher Platform",
-      "accessoryType": "outlet",
       "debug": false,
       "secondsToRemove": 0,
       "devices": [
@@ -138,10 +138,10 @@ If you don't use Homebridge UI or HOOBS, keep reading:
 
 ## Auto Detect Configurations & Multiple Accessories
 
-The plugin will scan and listen for messages from all your Switcher devices. When a message is received from a new Switcher device, the plugin will automatically add it to HomeKit in it's default icon and functionality
-Power Plug => Outlet
-Boiler => Switch (for now, until apple will fix the valve accessory duration issue)
-Runner => Window Covering (type cannot be changed)
+The plugin will scan and listen for messages from all your Switcher devices. When a message is received from a new Switcher device, the plugin will automatically add it to HomeKit in it's default icon and functionality <br>
+**Power Plug** => Outlet <br>
+**Boiler** => Water Valve <br>
+**Runner** => Window Covering (type cannot be changed)
 
 To change the device icon and functionality continue reading...
 
@@ -253,6 +253,11 @@ Custom accessory type for a device:
 #### Switch (default)
 When you just want a normal switch (like version 1) and don't need anything else. (all [extra services](###extras) will still appear in 3rd party apps)
 
+Choosing switch will also track your power consumption.<br>
+**Eve app only**: history and stats and will even calculate yearly costs after it collected enough data.
+
+Read more about it [here](###extras)
+
 #### Outlet
 Choose `"accessoryType": "outlet"` if you are most interested in the power consumption stats and automations. Outlet accessory will reveal the service "In Use" which will only be active if your boiler is ON and consume energy. it will not be active when the boiler has reached it's temperature limit and no power is used (even if the switcher is ON -  accessory will show on but not "in use").<br>
 Choosing outlet will also track your power consumption.<br>
@@ -267,6 +272,10 @@ Choosing `"accessoryType": "valve"` will give you the possibility to control you
 Since version 3, The plugin manage it's own "Auto Shutdown" duration. Now you are able to set any amount of time between 1 minute to 23:59 hours.
 Next time you'll turn on the switcher from the Home App it will be turned ON only for the amount of time you've set in HomeKit.
 
+Choosing valve will also track your power consumption.<br>
+**Eve app only**: history and stats and will even calculate yearly costs after it collected enough data.
+
+Read more about it [here](###extras)
 ### Extras
 
 Since version 1.1.0 there are a lot more exciting options for your Switcher!
