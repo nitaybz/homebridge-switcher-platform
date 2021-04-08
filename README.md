@@ -2,8 +2,8 @@
 
 # homebridge-switcher-platform
 
-[![Downloads](https://img.shields.io/npm/dt/homebridge-switcher-boiler.svg?color=critical)](https://www.npmjs.com/package/homebridge-switcher-boiler)
-[![Version](https://img.shields.io/npm/v/homebridge-switcher-boiler)](https://www.npmjs.com/package/homebridge-switcher-boiler)<br>
+[![Downloads](https://img.shields.io/npm/dt/homebridge-switcher-platform.svg?color=critical)](https://www.npmjs.com/package/homebridge-switcher-platform)
+[![Version](https://img.shields.io/npm/v/homebridge-switcher-platform)](https://www.npmjs.com/package/homebridge-switcher-platform)<br>
 [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins) [![Homebridge Discord](https://img.shields.io/discord/432663330281226270?color=728ED5&logo=discord&label=discord)](https://discord.gg/7DyabQ6)<br>
 [![certified-hoobs-plugin](https://badgen.net/badge/HOOBS/Certified/yellow)](https://plugins.hoobs.org?ref=10876) [![hoobs-support](https://badgen.net/badge/HOOBS/Support/yellow)](https://support.hoobs.org?ref=10876)
 
@@ -59,7 +59,7 @@ This plugin is HomeBridge verified and [HOOBS](https://hoobs.org/?ref=10876) cer
 If you don't use Homebridge UI or HOOBS, keep reading:
 
 1. Install homebridge using: `sudo npm install -g homebridge --unsafe-perm`
-2. Install this plugin using: `sudo npm install -g homebridge-switcher-boiler`
+2. Install this plugin using: `sudo npm install -g homebridge-switcher-platform`
 3. Update your configuration file. See `config-sample.json` in this repository for a sample.
 
 ## Config File Examples
@@ -350,7 +350,7 @@ Please verify that your Switcher device is connected to the network and under th
 ### other
 
 
-If you experience any issues with the plugins please refer to the [Issues](https://github.com/nitaybz/homebridge-switcher-boiler/issues) tab or [Switcher-Boiler Discord Channel](https://discord.gg/7DyabQ6) and check if your issue is already described there, if it doesn't, please report a new issue with as much detailed information as you can give (logs are crucial).<br>
+If you experience any issues with the plugins please refer to the [Issues](https://github.com/nitaybz/homebridge-switcher-platform/issues) tab or [Switcher-Boiler Discord Channel](https://discord.gg/7DyabQ6) and check if your issue is already described there, if it doesn't, please report a new issue with as much detailed information as you can give (logs are crucial).<br>
 if you want to even speed up the process, you can add `"debug": true` to your config, which will give me more details on the logs and speed up fixing the issue.
 
 
@@ -360,9 +360,9 @@ if you want to even speed up the process, you can add `"debug": true` to your co
 
 This Plugin could not be made without the extensive research of the Switcher V2 Protocol which was performed by @AviadGolan and @NightRang3r and the JS implementation of their work by @johnathanvidu.
 
-## Support homebridge-switcher-boiler
+## Support homebridge-switcher-platform
 
-**homebridge-switcher-boiler** is a free plugin under the MIT license. it was developed as a contribution to the homebridge/hoobs community with lots of love and thoughts.
+**homebridge-switcher-platform** is a free plugin under the MIT license. it was developed as a contribution to the homebridge/hoobs community with lots of love and thoughts.
 Creating and maintaining Homebridge plugins consume a lot of time and effort and if you would like to share your appreciation, feel free to "Star" or donate.
 
 <a target="blank" href="https://www.paypal.me/nitaybz"><img src="https://img.shields.io/badge/PayPal-Donate-blue.svg?logo=paypal"/></a><br>
