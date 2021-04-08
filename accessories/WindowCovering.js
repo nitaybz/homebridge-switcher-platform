@@ -74,11 +74,26 @@ class WindowCovering {
 
 	updateState(state) {
 		this.state = state
-		const positionState = this.state.direction === 'DOWN' ? 0 : this.state.direction === 'UP' ? 1 : 2
-		this.WindowCoveringService.getCharacteristic(Characteristic.CurrentPosition).updateValue(this.state.position)
-		this.WindowCoveringService.getCharacteristic(Characteristic.PositionState).updateValue(positionState)
-		if (positionState === 2)
-			this.WindowCoveringService.getCharacteristic(Characteristic.TargetPosition).updateValue(this.state.position)
+		const targetPositionValue = this.WindowCoveringService.getCharacteristic(Characteristic.TargetPosition).value
+		switch (this.state.direction) {
+			case 'DOWN':
+				this.WindowCoveringService.getCharacteristic(Characteristic.PositionState).updateValue(0)
+				this.WindowCoveringService.getCharacteristic(Characteristic.CurrentPosition).updateValue(this.state.position)
+				if (targetPositionValue >= this.state.position)
+					this.WindowCoveringService.getCharacteristic(Characteristic.TargetPosition).updateValue(0)
+				break;
+			case 'UP':
+				this.WindowCoveringService.getCharacteristic(Characteristic.PositionState).updateValue(1)
+				this.WindowCoveringService.getCharacteristic(Characteristic.CurrentPosition).updateValue(this.state.position)
+				if (targetPositionValue <= this.state.position)
+					this.WindowCoveringService.getCharacteristic(Characteristic.TargetPosition).updateValue(100)
+				break;
+			case 'STOP':
+				this.WindowCoveringService.getCharacteristic(Characteristic.PositionState).updateValue(2)
+				this.WindowCoveringService.getCharacteristic(Characteristic.CurrentPosition).updateValue(this.state.position)
+				this.WindowCoveringService.getCharacteristic(Characteristic.TargetPosition).updateValue(this.state.position)
+				break;
+		}
 	}
 }
 
