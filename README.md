@@ -59,7 +59,7 @@ This plugin is HomeBridge verified and [HOOBS](https://hoobs.org/?ref=10876) cer
 If you don't use Homebridge UI or HOOBS, keep reading:
 
 1. Install homebridge using: `sudo npm install -g homebridge --unsafe-perm`
-2. Install this plugin using: `sudo npm install -g homebridge-switcher-boiler`
+2. Install this plugin using: `sudo npm install -g homebridge-switcher-platform`
 3. Update your configuration file. See `config-sample.json` in this repository for a sample.
 
 ## Config File Examples
