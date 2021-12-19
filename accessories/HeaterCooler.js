@@ -121,6 +121,10 @@ class HeaterCooler {
 
 	updateState(state) {
 		this.state = state
+
+		if (!this.HeaterCoolerService)
+			return
+			
 		this.HeaterCoolerService.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.state['current_temp'])
 		
 		// if status is OFF, set all services to INACTIVE
