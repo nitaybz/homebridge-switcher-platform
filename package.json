@@ -1,7 +1,7 @@
 {
   "name": "homebridge-switcher-platform",
   "description": "Homebridge plugin for Switcher Smart Accessories",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/nitaybz/homebridge-switcher-platform.git"
