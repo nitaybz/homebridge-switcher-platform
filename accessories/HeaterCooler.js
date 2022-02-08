@@ -57,6 +57,14 @@ class HeaterCooler {
 		else {
 			switcher.on('capabilities', this.addHeaterCoolerService.bind(this));
 		}
+
+		// temporary fix to remove faulty switch for breeze
+		let SwitchService = this.accessory.getService(Service.Switch)
+		if (SwitchService) {
+			// remove service
+			this.log.easyDebug(`Removing Switch Service from breeze`)
+			this.accessory.removeService(SwitchService)
+		}
 	}
 
 	addHeaterCoolerService(remote) {
