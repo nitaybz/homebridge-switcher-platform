@@ -68,7 +68,7 @@ class WindowCovering {
 
 		this[`SwitchService${index}`].getCharacteristic(Characteristic.On)
 			.on('set', stateManager.set.MixedOn.bind(this, index))
-			.updateValue(this.state[`light${index}_power`])
+			.updateValue(this.state[`light${index}_power`] === 'ON')
 			
 	}
 
@@ -95,7 +95,7 @@ class WindowCovering {
 		for (let i = 1; i < 4; i++) {
 			if (this.state[`light${i}_power`])
 				this[`SwitchService${i}`].getCharacteristic(Characteristic.On)
-					.updateValue(this.state[`light${i}_power`])
+					.updateValue(this.state[`light${i}_power`] === 'ON')
 
 			if (this.state[`runner${i}_position`] && this.state[`runner${i}_direction`]) {
 				const targetPositionValue = this[`WindowCoveringService${i}`].getCharacteristic(Characteristic.TargetPosition).value
