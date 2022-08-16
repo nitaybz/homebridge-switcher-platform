@@ -73,6 +73,13 @@ class WindowCovering {
 
 		this.WindowCoveringService.getCharacteristic(Characteristic.HoldPosition)
 			.on('set', stateManager.set.HoldPosition.bind(this))
+
+		this.WindowCoveringService.addOptionalCharacteristic(Characteristic.LockPhysicalControls)
+
+		this.WindowCoveringService.getCharacteristic(Characteristic.LockPhysicalControls)
+			.on('set', stateManager.set.ChildLock.bind(this))
+			.updateValue(this.state.child_lock === 'ON' ? 1 : 0)
+
 	}
 
 	updateState(state) {
@@ -97,6 +104,7 @@ class WindowCovering {
 				this.WindowCoveringService.getCharacteristic(Characteristic.TargetPosition).updateValue(this.state.position)
 				break;
 		}
+		this.WindowCoveringService.getCharacteristic(Characteristic.LockPhysicalControls).updateValue(this.state.child_lock === 'ON' ? 1 : 0)
 	}
 }
 

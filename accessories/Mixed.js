@@ -88,6 +88,9 @@ class WindowCovering {
 			.on('set', stateManager.set.MixedTargetPosition.bind(this, Characteristic, index))
 			.updateValue(this.state[`runner${index}_position`])
 
+		this[`WindowCoveringService${index}`].getCharacteristic(Characteristic.HoldPosition)
+			.on('set', stateManager.set.MixedHoldPosition.bind(this, index))
+
 		this[`WindowCoveringService${index}`].addOptionalCharacteristic(Characteristic.LockPhysicalControls)
 
 		this[`WindowCoveringService${index}`].getCharacteristic(Characteristic.LockPhysicalControls)
