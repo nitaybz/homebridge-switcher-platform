@@ -87,6 +87,13 @@ class WindowCovering {
 		this[`WindowCoveringService${index}`].getCharacteristic(Characteristic.TargetPosition)
 			.on('set', stateManager.set.MixedTargetPosition.bind(this, Characteristic, index))
 			.updateValue(this.state[`runner${index}_position`])
+
+		this[`WindowCoveringService${index}`].addOptionalCharacteristic(Characteristic.LockPhysicalControls)
+
+		this[`WindowCoveringService${index}`].getCharacteristic(Characteristic.LockPhysicalControls)
+			.on('set', stateManager.set.MixedChildLock.bind(this, index))
+			.updateValue(this.state[`runner${index}_child_lock`] === 'ON' ? 1 : 0)
+			
 	}
 
 	updateState(state) {
@@ -96,8 +103,8 @@ class WindowCovering {
 			if (this.state[`light${i}_power`])
 				this[`SwitchService${i}`].getCharacteristic(Characteristic.On)
 					.updateValue(this.state[`light${i}_power`] === 'ON')
-
-			if (this.state[`runner${i}_position`] && this.state[`runner${i}_direction`]) {
+					
+			if (this.state[`runner${i}_direction`]) {
 				const targetPositionValue = this[`WindowCoveringService${i}`].getCharacteristic(Characteristic.TargetPosition).value
 				switch (this.state[`runner${i}_direction`]) {
 					case 'DOWN':
@@ -118,6 +125,8 @@ class WindowCovering {
 						this[`WindowCoveringService${i}`].getCharacteristic(Characteristic.TargetPosition).updateValue(this.state[`runner${i}_position`])
 						break;
 				}
+
+				this[`WindowCoveringService${i}`].getCharacteristic(Characteristic.LockPhysicalControls).updateValue(this.state[`runner${i}_child_lock`] === 'ON' ? 1 : 0)
 
 			}
 		}

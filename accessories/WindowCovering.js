@@ -70,6 +70,9 @@ class WindowCovering {
 		this.WindowCoveringService.getCharacteristic(Characteristic.TargetPosition)
 			.on('set', stateManager.set.TargetPosition.bind(this, Characteristic))
 			.updateValue(this.state.position)
+
+		this.WindowCoveringService.getCharacteristic(Characteristic.HoldPosition)
+			.on('set', stateManager.set.HoldPosition.bind(this))
 	}
 
 	updateState(state) {
