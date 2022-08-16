@@ -1,7 +1,7 @@
 {
   "name": "homebridge-switcher-platform",
   "description": "Homebridge plugin for Switcher Smart Accessories",
-  "version": "4.4.0",
+  "version": "4.3.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/nitaybz/homebridge-switcher-platform.git"
@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "fakegato-history": "^0.6.3",
-    "switcher-js2": "^1.4.0"
+    "switcher-js2": "^1.4.2"
   },
   "devDependencies": {
     "eslint": "^8.18.0"
