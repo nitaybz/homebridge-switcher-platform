@@ -98,6 +98,9 @@
         "key": "name"
       },
       {
+        "key": "token"
+      },
+      {
         "key": "debug"
       },
       {
