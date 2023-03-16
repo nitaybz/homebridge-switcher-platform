@@ -10,7 +10,7 @@ const Extras = function(service) {
 	
 	
 		if (this.type !== 'Valve')
-			service.addOptionalCharacteristic(EnergyCharacteristics.SetDuration)
+			service.addOptionalCharacteristic(Characteristic.SetDuration)
 		service.getCharacteristic(Characteristic.SetDuration)
 			.setProps({
 				format: Characteristic.Formats.UINT32,
@@ -23,7 +23,7 @@ const Extras = function(service) {
 			.on('set', stateManager.set.SetDuration.bind(this))
 	
 		if (this.type !== 'Valve')
-			service.addOptionalCharacteristic(EnergyCharacteristics.RemainingDuration)
+			service.addOptionalCharacteristic(Characteristic.RemainingDuration)
 		service.getCharacteristic(Characteristic.RemainingDuration)
 			.setProps({
 				maxValue: 86340,
