@@ -17,6 +17,7 @@ class SwitcherPlatform {
 		this.PLATFORM_NAME = PLATFORM_NAME
 		this.name = config.name || PLATFORM_NAME
 		this.accessoryType = config.accessoryType
+		this.token = config.token
 		this.devices = config.devices || []
 		this.customTimers = config.customTimers || []
 		this.secondsToRemove = (config.secondsToRemove === null || config.secondsToRemove === undefined) ? 0 : config.secondsToRemove

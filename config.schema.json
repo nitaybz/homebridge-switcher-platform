@@ -13,6 +13,12 @@
               "default": "Switcher Platform",
               "required": false
           },
+          "token": {
+              "title": "Token",
+              "description": "Some devices require a token to operate, the token can be acquired from this link: <a target=\"_blank\" href=\"https://switcher.co.il/GetKey/\">https://switcher.co.il/GetKey/</a>",
+              "type": "string",
+              "required": false
+          },
           "debug": {
               "title": "Enable Debug Logs",
               "description": "When checked, the plugin will produce extra logs for debugging purposes",

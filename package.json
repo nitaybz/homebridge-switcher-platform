@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "fakegato-history": "^0.6.3",
-    "switcher-js2": "^1.5.4"
+    "switcher-js2": "^1.5.5"
   },
   "devDependencies": {
     "eslint": "^8.18.0"

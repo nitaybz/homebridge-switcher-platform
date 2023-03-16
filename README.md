@@ -22,6 +22,11 @@ One of this model (minimum firmware required)
 - Switcher V4
 - Switcher Runner
 - Switcher Runner Mini
+- Switcher S11
+- Switcher S12
+
+### Due to security reason, some devices require a token to operate, the token can be acquired from this link: [https://switcher.co.il/GetKey/](https://switcher.co.il/GetKey/) ) 
+\* minimum firmware version required for the token is 2.31
 
 Your Homebridge/Hoobs machine clock/time must be accurate. The easiest way to check if it's correct is to check the current logs. If time is not accurate, google on how to set it correctly on your machine.
 
@@ -83,6 +88,7 @@ If you don't use Homebridge UI or HOOBS, keep reading:
     {
       "platform": "SwitcherPlatform",
       "name": "Switcher Platform",
+      "token": "d3j29d0j23dio2j23d==",
       "debug": false,
       "secondsToRemove": 0,
       "devices": [
@@ -125,6 +131,7 @@ If you don't use Homebridge UI or HOOBS, keep reading:
 |:--------------|:------------------------|:--------:|:--------:|
 | `platform`  | always `"SwitcherPlatform"` |     -    |  String  |
 | `name`      | Platform name for logs  | `"SwitcherBolier"`    |  String  |
+| `token`      | Some devices require a token to operate, the token can be acquired from this link: [https://switcher.co.il/GetKey/](https://switcher.co.il/GetKey/) |   |  String  |
 | `secondsToRemove`  |  Time in seconds to remove a device if it has not being discovered. set to 0 to not remove accessories at all.   |  `0` |  Integer |
 | `debug`       |  When set to `true`, the plugin will produce extra logs for debugging purposes        |  `false` |  Boolean  |
 | **devices** | List of devices for custom settings (with the below information)| | Array| 

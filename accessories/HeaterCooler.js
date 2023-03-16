@@ -150,6 +150,12 @@ class HeaterCooler {
 				// turn on HeaterCoolerService
 				this.HeaterCoolerService.getCharacteristic(Characteristic.Active).updateValue(1)
 
+				// normalize temp
+				if (this.state['target_temp'] < this.capabilities['min_temp'])
+					this.state['target_temp'] = this.capabilities['min_temp']
+				if (this.state['target_temp'] > this.capabilities['max_temp'])
+					this.state['target_temp'] = this.capabilities['max_temp']
+
 				// update temperatures for HeaterCoolerService
 				this.HeaterCoolerService.getCharacteristic(Characteristic.HeatingThresholdTemperature).updateValue(this.state['target_temp'])
 				this.HeaterCoolerService.getCharacteristic(Characteristic.CoolingThresholdTemperature).updateValue(this.state['target_temp'])

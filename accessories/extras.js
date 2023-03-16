@@ -9,7 +9,8 @@ const Extras = function(service) {
 			this.accessory.context.duration = this.duration = this.state.default_shutdown_seconds
 	
 	
-		
+		if (this.type !== 'Valve')
+			service.addOptionalCharacteristic(EnergyCharacteristics.SetDuration)
 		service.getCharacteristic(Characteristic.SetDuration)
 			.setProps({
 				format: Characteristic.Formats.UINT32,
@@ -21,6 +22,8 @@ const Extras = function(service) {
 			.on('get', stateManager.get.SetDuration.bind(this))
 			.on('set', stateManager.set.SetDuration.bind(this))
 	
+		if (this.type !== 'Valve')
+			service.addOptionalCharacteristic(EnergyCharacteristics.RemainingDuration)
 		service.getCharacteristic(Characteristic.RemainingDuration)
 			.setProps({
 				maxValue: 86340,
@@ -33,18 +36,23 @@ const Extras = function(service) {
 
 	const EnergyCharacteristics = require('../lib/EnergyCharacteristics')(Characteristic)
 
+	service.addOptionalCharacteristic(EnergyCharacteristics.Volts)
 	service.getCharacteristic(EnergyCharacteristics.Volts)
 		.on('get', stateManager.get.Volts.bind(this))
 
+	service.addOptionalCharacteristic(EnergyCharacteristics.Amperes)
 	service.getCharacteristic(EnergyCharacteristics.Amperes)
 		.on('get', stateManager.get.Amperes.bind(this))
-
+	
+	service.addOptionalCharacteristic(EnergyCharacteristics.Watts)
 	service.getCharacteristic(EnergyCharacteristics.Watts)
 		.on('get', stateManager.get.Watts.bind(this))
 
+	service.addOptionalCharacteristic(EnergyCharacteristics.KilowattHours)
 	service.getCharacteristic(EnergyCharacteristics.KilowattHours)
 		.on('get', stateManager.get.KilowattHours.bind(this))
-
+	
+	service.addOptionalCharacteristic(EnergyCharacteristics.ResetTotal)
 	service.getCharacteristic(EnergyCharacteristics.ResetTotal)
 		.on('get', stateManager.get.ResetTotal.bind(this))
 		.on('set', stateManager.set.ResetTotal.bind(this))
