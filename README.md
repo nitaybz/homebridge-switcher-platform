@@ -12,7 +12,7 @@
 
 ### Requirements
 
-One of this model (minimum firmware required)
+One of this model (minimum firmware required on some devices)
 
 - Switcher V3: (Switcher Touch) - min firmware V1.51
 - Switcher V2: min firmware 3.21 (Based on ESP chipset)
@@ -22,8 +22,12 @@ One of this model (minimum firmware required)
 - Switcher V4
 - Switcher Runner
 - Switcher Runner Mini
-- Switcher S11
-- Switcher S12
+- Switcher Breeze
+- Switcher Runner S11
+- Switcher Runner S12
+- Switcher Lights SL01
+- Switcher Lights SL02
+- Switcher Lights SL03
 
 ### Due to security reason, some devices require a token to operate, the token can be acquired from this link: [https://switcher.co.il/GetKey/](https://switcher.co.il/GetKey/) ) 
 \* minimum firmware version required for the token is 2.31
@@ -342,15 +346,16 @@ Custom timers for a device:
 
 ## Issues & Debug
 
-#### I can see status but I can't control
+### I can see status but I can't control
 
 Check that you have the latest firmware installed and that your homebridge machine clock is accurate.
-#### When using valve, I can only see 5 and 10 minutes
+If you have the latest firmware version installed and it still not working, try to set "Local" mode in Switcher app and turn your device on and off from the switcher app in this mode. you can then remove "Local" mode and the switcher should be controllable again from HomeKit in a few minutes (up to 30 min).
 
-This is a known iOS bug since iOS 14 release... I guess we can only wait for Apple to fix it.
-in the meantime, use the Eve app to control the duration.
+### When using valve, I can't add the device to scenes and automations
 
-#### My Switcher is not showing up in HomeKit
+Home app does not allow water devices to be part of scenes and automations, use a 3rd party app like "Eve" to add this device to automations or scenes.
+
+### My Switcher is not showing up in HomeKit
 
 Please verify that your Switcher device is connected to the network and under the same subnet as Homebridge.
 
