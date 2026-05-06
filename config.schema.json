@@ -28,7 +28,7 @@
           },
           "secondsToRemove": {
               "title": "Seconds to remove disconnected device",
-              "description": "Time in seconds to remove a device if it has not being discovered (default is 10 minutes). set 0 to not remove accessories at all.",
+              "description": "Time in seconds to wait after Homebridge startup before unregistering devices that have not broadcast a UDP message yet. Default is 0, which means devices are NEVER auto-removed (recommended). Setting a low value can cause valid devices to be removed from HomeKit scenes if they happen to broadcast late on a given startup.",
               "type": "integer",
               "default": 0,
               "required": false
