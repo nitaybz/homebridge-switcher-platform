@@ -7,6 +7,11 @@
 [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins) [![Homebridge Discord](https://img.shields.io/discord/432663330281226270?color=728ED5&logo=discord&label=discord)](https://discord.gg/7DyabQ6)<br>
 [![certified-hoobs-plugin](https://badgen.net/badge/HOOBS/Certified/yellow)](https://plugins.hoobs.org?ref=10876) [![hoobs-support](https://badgen.net/badge/HOOBS/Support/yellow)](https://support.hoobs.org?ref=10876)
 
+## Compatibility
+
+* Homebridge v1.8+ and v2.0+
+* Node.js v22 or v24 (required by Homebridge v2)
+
 [Homebridge](https://github.com/nfarina/homebridge) plugin for [Switcher](https://switcher.co.il/)  Smart Accessories
 <img src="branding/products.png" width="500px">
 

@@ -13,11 +13,11 @@ const Extras = function(service) {
 			service.addOptionalCharacteristic(Characteristic.SetDuration)
 		service.getCharacteristic(Characteristic.SetDuration)
 			.setProps({
-				format: Characteristic.Formats.UINT32,
+				format: 'uint32',
 				maxValue: 86340,
 				minValue: 0,
 				minStep: 60,
-				perms: [Characteristic.Perms.READ, Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
+				perms: ['pr', 'pw', 'ev']
 			})
 			.on('get', stateManager.get.SetDuration.bind(this))
 			.on('set', stateManager.set.SetDuration.bind(this))
@@ -62,10 +62,10 @@ const Extras = function(service) {
 			if (this.model !== 'power_plug') {
 				service.getCharacteristic(Characteristic.RemainingDuration).updateValue(this.state.remaining_seconds)
 			}
-			service.getCharacteristic(EnergyCharacteristics.Watts).getValue(null)
-			service.getCharacteristic(EnergyCharacteristics.Volts).getValue(null)
-			service.getCharacteristic(EnergyCharacteristics.Amperes).getValue(null)
-			service.getCharacteristic(EnergyCharacteristics.KilowattHours).getValue(null)
+			service.getCharacteristic(EnergyCharacteristics.Watts).value
+			service.getCharacteristic(EnergyCharacteristics.Volts).value
+			service.getCharacteristic(EnergyCharacteristics.Amperes).value
+			service.getCharacteristic(EnergyCharacteristics.KilowattHours).value
 
 			const timeSinceLastState = new Date() - this.lastStateTime
 			this.lastStateTime = new Date()
