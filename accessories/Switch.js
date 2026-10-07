@@ -5,7 +5,6 @@ const addExtras = require('./extras')
 class Switch {
 	constructor(switcher, switcherInfo, platform) {
 
-		const FakeGatoHistoryService = require("fakegato-history")(platform.api)
 		
 		Service = platform.api.hap.Service
 		Characteristic = platform.api.hap.Characteristic
@@ -47,7 +46,7 @@ class Switch {
 		this.accessory.context.ip = this.ip
 
 		// ~~~~~~~~ power consumption history variables ~~~~~~~~
-		this.loggingService = new FakeGatoHistoryService('custom', this.accessory, { storage: 'fs', path: this.api.user.persistPath() + '/../switcher-persist', disableTimer:true  })
+		this.loggingService = require('../lib/history')(this.accessory, this.api, this.log)
 		this.totalEnergy = 0
 		this.totalEnergyTemp = 0
 		this.lastReset = 0

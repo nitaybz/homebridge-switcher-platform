@@ -87,7 +87,17 @@ const Extras = function(service) {
 			}
 	
 			
-			this.loggingService.addEntry({time: Math.floor((new Date()).getTime()/1000), power: this.state.power_consumption, status: !!this.state.power})
+			// Do not feed FakeGato before loading completes: it schedules a retry
+			// timer for every entry. Energy above still accumulates on every update.
+			if (this.loggingService.isHistoryLoaded()) {
+				const time = Math.floor(Date.now() / 1000)
+				const status = !!this.state.power
+				if (this.lastHistoryTime === undefined || time - this.lastHistoryTime >= 60 || time < this.lastHistoryTime || status !== this.lastHistoryStatus) {
+					this.lastHistoryTime = time
+					this.lastHistoryStatus = status
+					this.loggingService.addEntry({ time, power: this.state.power_consumption, status })
+				}
+			}
 
 		}
 	}
