@@ -72,8 +72,9 @@ test('failed writes release queue and later updates can persist', t => {
 	const accessory = device(env)
 	accessory.updateState(accessory.state)
 	env.drain(new Error('EIO'))
-	assert.equal(env.timers.size, 0)
+	assert.equal(env.timers.size, 1)
 	accessory.updateState({ ...accessory.state, power: 1 })
+	env.runTimers()
 	assert.equal(env.drain().length, 1)
 })
 

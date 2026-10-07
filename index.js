@@ -37,6 +37,7 @@ class SwitcherPlatform {
 		}
 
 		this.api.on('didFinishLaunching', Switcher.init.bind(this))
+		this.api.on('shutdown', Switcher.shutdown.bind(this))
 
 	}
 
